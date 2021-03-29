@@ -21,9 +21,11 @@ local:
     #- --no-term
     #- rel
     ### for flow123d (docker image install)
-    - --version 3.1.0
-    - --tty false
-    - --interactive false
+    #- --version 3.1.0
+    - --tty
+    - "false"
+    - --interactive
+    - "false"
     ### for both
     - run
   np: 1
@@ -45,7 +47,7 @@ metacentrum:
     - /storage/liberec3-tul/home/pavel_exner/WGC2020-THM-MC/wgc2020_model/env/bin/gmsh
 
 
-end_time: &end_time 40
+end_time: &end_time 365
 output_times: &output_times
   - {begin: 0, step: 1, end: 20}
   - {begin: 20, step: 2, end: 30}
@@ -53,7 +55,6 @@ output_times: &output_times
 
 geometry:
   # depth of the center of the box and of the coordinate system
-#  center_depth: 5000
   # x,y,z dimension
   box_dimensions: [100, 100]
   # tunnel center
@@ -63,13 +64,11 @@ geometry:
   tunnel_mesh_step: 0.5
 
 # base of the mesh file name
-mesh_name: random_fractures
+mesh_name: tunnel_mesh
 
 # parameters substituted into the HM model template
 hm_params:
-    # The mesh to use in both simulations.
-    #mesh: three_frac_symmetric.msh
-    mesh: random_fractures.msh # healed mesh is used at the end (programmatically replaced)
+    mesh: tunnel_mesh.msh # healed mesh is used at the end (programmatically replaced)
     in_file: A01_hm
 
     output_times: *output_times
