@@ -1,0 +1,96 @@
+# keeps computed results in dirs
+debug: True
+
+# true -> work with pbs on metacentrum
+# false -> run locally, no pbs
+run_on_metacentrum: False
+
+# number of samples
+n_samples: 1
+task_size: 0.001
+collect_only: False
+mesh_only: False
+
+copy_files: [config.yaml, flow123d_simulation.py, A01_hm_tmpl.yaml]
+
+# The flow executable and arguments to use.
+local:
+  flow_executable:
+    - /home/paulie/local/flow123d/flow123d_3.1.0/bin/fterm.sh
+    ### for flow123d build (not docker image install)
+    #- --no-term
+    #- rel
+    ### for flow123d (docker image install)
+    - --version 3.1.0
+    - --tty false
+    - --interactive false
+    ### for both
+    - run
+  np: 1
+  gmsh_executable:
+    - /home/paulie/Workspace/Endorse-2Dtest-Bayes/venv/bin/gmsh
+
+metacentrum:
+  flow_executable:
+  # release
+    #- /storage/liberec3-tul/home/jan_brezina/workspace/flow123d/bin/flow123d
+    #- '/storage/liberec3-tul/home/pavel_exner/workspace/flow123d/build-PE_wgc2020/bin/mpiexec'
+    #- '-np'
+    #- '10'
+    - '/storage/liberec3-tul/home/pavel_exner/workspace/flow123d/build-PE_wgc2020/bin/flow123d'
+  # debug
+  #- /storage/liberec3-tul/home/jan_brezina/workspace/flow-dbg/flow123d/bin/flow123d
+  gmsh_executable:
+    #- /storage/liberec3-tul/home/martin_spetlik/astra/gmsh/bin/gmsh
+    - /storage/liberec3-tul/home/pavel_exner/WGC2020-THM-MC/wgc2020_model/env/bin/gmsh
+
+
+end_time: &end_time 40
+output_times: &output_times
+  - {begin: 0, step: 1, end: 20}
+  - {begin: 20, step: 2, end: 30}
+  - {begin: 30, step: 5, end: *end_time}
+
+geometry:
+  # depth of the center of the box and of the coordinate system
+#  center_depth: 5000
+  # x,y,z dimension
+  box_dimensions: [100, 100]
+  # tunnel center
+  tunnel_center: [0, 0, 0]
+  tunnel_dimX: &tunnel_dimX 4.375 # X cross-section
+  tunnel_dimY: &tunnel_dimY 3.5 # X cross-section
+  tunnel_mesh_step: 0.5
+
+# base of the mesh file name
+mesh_name: random_fractures
+
+# parameters substituted into the HM model template
+hm_params:
+    # The mesh to use in both simulations.
+    #mesh: three_frac_symmetric.msh
+    mesh: random_fractures.msh # healed mesh is used at the end (programmatically replaced)
+    in_file: A01_hm
+
+    output_times: *output_times
+    end_time: *end_time
+
+    tunnel_dimX: *tunnel_dimX
+    tunnel_dimY: *tunnel_dimY
+
+    biot_alpha: 0.17
+    bulk_conductivity: 6e-15
+    # K = k * rho * g /mu
+    # permeability k=6e-22 m2
+    # dynamic viscosity mu=0.001 Pa.s
+
+    mechanics_solver__a_tol: 1e-14
+    mechanics_solver__r_tol: 1e-7
+    mechanics_solver__options: -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg -ksp_monitor
+        # -ksp_type cg -pc_type icc -pc_factor_levels 2 -ksp_diagonal_scale -ksp_diagonal_scale_fix -pc_factor_fill 3.0 -ksp_monitor
+
+    flow_solver__a_tol: 1e-14
+    flow_solver__r_tol: 1e-7
+
+    flow_solver__options: -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg -ksp_monitor
+        # -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg  -pc_hypre_boomeramg_coarsen_type HMIS -pc_hypre_boomeramg_strong_threshold 0.5  -ksp_monitor
