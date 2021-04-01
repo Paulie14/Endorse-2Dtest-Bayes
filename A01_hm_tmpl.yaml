@@ -15,6 +15,7 @@ problem: !Coupling_Sequential
         fluid_density: 1000
     time:
       end_time: <end_time>
+      # common time unit cannot be used in field formulas
       common_time_unit: d
     iteration_parameter: 1 # affects convergence of HM coupling (defaults to 1, lower value sometimes helps)
     a_tol: 0
@@ -34,11 +35,6 @@ problem: !Coupling_Sequential
             # porosity nu=0.007
             # water compressibility beta_w=0 1/Pa
             init_pressure: 300
-#          - region: fractures
-#            cross_section: <fr_cross_section>
-#            conductivity: <fr_conductivity>
-#            storativity: 2e-7
-#            init_piezo_head: 0
 
           - region: .outer_boundary
             bc_type: dirichlet
@@ -59,6 +55,7 @@ problem: !Coupling_Sequential
             bc_type: dirichlet
             bc_pressure: 0
 
+          ### Trying prescribe b.c. using CSV (time evolving b.c.)
 #          - region: .tunnel
 #            time: 17
 #            bc_type: dirichlet
@@ -111,16 +108,12 @@ problem: !Coupling_Sequential
           a_tol: <mechanics_solver__a_tol>
           r_tol: <mechanics_solver__r_tol>
           options: <mechanics_solver__options>
-          # -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg
-          #options: -ksp_type cg -pc_type icc -pc_factor_levels 2 -ksp_diagonal_scale -ksp_diagonal_scale_fix -pc_factor_fill 3.0 -ksp_monitor
         input_fields:
           - region: BULK
             young_modulus: 60e9
             poisson_ratio: 0.2
-#          - region: fractures
-#            young_modulus: 50e0
-#            poisson_ratio: 0.25
 
+          ### Original b.c. according to TSX
 #          - region: .top
 #            bc_type: traction
 #            bc_traction: [0, -11e6, 0]
@@ -133,27 +126,10 @@ problem: !Coupling_Sequential
 #          - region: [.fix_left, .fix_bottom]
 #            bc_type: displacement
 #            bc_displacement: 0
+
           - region: .outer_boundary
             bc_type: displacement
             bc_displacement: 0
-
-#          - region: .tunnel
-#            bc_type: traction
-#            bc_traction: [ 0, 0, 0 ]
-#          - region: .tunnel
-#            bc_type: traction
-#            bc_traction: !FieldFormula
-#              value: [ -45e6*x / sqrt(x*x+y*y), -11e6*y / sqrt(x*x+y*y), 0 ]
-
-#          - region: .tunnel
-#            time: 0
-#            bc_type: traction
-#            bc_traction: !FieldFormula
-#              value: [45e6*(-1/(17*86400)*t + 1)*x / sqrt(x*x+y*y), 11e6*(-1/(17*86400)*t + 1)*y / sqrt(x*x+y*y), 0] # 1d=86400s
-#          - region: .tunnel
-#            time: 17
-#            bc_type: traction
-#            bc_traction: [0, 0, 0]
 
           - region: .tunnel
             time: 0

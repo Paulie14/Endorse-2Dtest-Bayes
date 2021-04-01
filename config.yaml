@@ -1,13 +1,13 @@
 # keeps computed results in dirs
-debug: True
+#debug: True
 
 # true -> work with pbs on metacentrum
 # false -> run locally, no pbs
-run_on_metacentrum: False
+#run_on_metacentrum: False
 
 # number of samples
-n_samples: 1
-task_size: 0.001
+#n_samples: 1
+#task_size: 0.001
 collect_only: False
 mesh_only: False
 
@@ -32,26 +32,25 @@ local:
   gmsh_executable:
     - /home/paulie/Workspace/Endorse-2Dtest-Bayes/venv/bin/gmsh
 
-metacentrum:
-  flow_executable:
-  # release
-    #- /storage/liberec3-tul/home/jan_brezina/workspace/flow123d/bin/flow123d
-    #- '/storage/liberec3-tul/home/pavel_exner/workspace/flow123d/build-PE_wgc2020/bin/mpiexec'
-    #- '-np'
-    #- '10'
-    - '/storage/liberec3-tul/home/pavel_exner/workspace/flow123d/build-PE_wgc2020/bin/flow123d'
-  # debug
-  #- /storage/liberec3-tul/home/jan_brezina/workspace/flow-dbg/flow123d/bin/flow123d
-  gmsh_executable:
-    #- /storage/liberec3-tul/home/martin_spetlik/astra/gmsh/bin/gmsh
-    - /storage/liberec3-tul/home/pavel_exner/WGC2020-THM-MC/wgc2020_model/env/bin/gmsh
+#metacentrum:
+#  flow_executable:
+#  # release
+#    #- /storage/liberec3-tul/home/jan_brezina/workspace/flow123d/bin/flow123d
+#    #- '/storage/liberec3-tul/home/pavel_exner/workspace/flow123d/build-PE_wgc2020/bin/mpiexec'
+#    #- '-np'
+#    #- '10'
+#    - '/storage/liberec3-tul/home/pavel_exner/workspace/flow123d/build-PE_wgc2020/bin/flow123d'
+#  # debug
+#  #- /storage/liberec3-tul/home/jan_brezina/workspace/flow-dbg/flow123d/bin/flow123d
+#  gmsh_executable:
+#    #- /storage/liberec3-tul/home/martin_spetlik/astra/gmsh/bin/gmsh
+#    - /storage/liberec3-tul/home/pavel_exner/WGC2020-THM-MC/wgc2020_model/env/bin/gmsh
 
 
 end_time: &end_time 365
 output_times: &output_times
-  - {begin: 0, step: 1, end: 20}
-  - {begin: 20, step: 2, end: 30}
-  - {begin: 30, step: 5, end: *end_time}
+  - {begin: 0, step: 2, end: 17}
+  - {begin: 17, step: 5, end: *end_time}
 
 geometry:
   # depth of the center of the box and of the coordinate system

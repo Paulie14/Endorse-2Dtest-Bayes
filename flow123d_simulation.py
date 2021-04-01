@@ -104,7 +104,6 @@ class endorse_2Dtest():
 
         self._config = config
 
-        # Set fine simulation common files directory
         # Files in the directory are used by each simulation at that level
         common_files_dir = os.path.join(self.work_dir, "common_files")
         force_mkdir(common_files_dir, force=self.clean)

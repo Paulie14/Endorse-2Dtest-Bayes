@@ -7,14 +7,13 @@ from flow123d_simulation import endorse_2Dtest
 
 
 if __name__ == "__main__":
-    with open(os.path.join(os.getcwd(), "config.yaml"), "r") as f:
-        config_dict = yaml.safe_load(f)
-    # self.config_dict["config_pbs"] = os.path.join(os.getcwd(), "config_PBS.yaml")
-
     work_dir = os.getcwd() + "/flow123d_sim"
     # Create working directory if necessary
     os.makedirs(work_dir, mode=0o775, exist_ok=True)
 
+    # read config file and setup paths
+    with open(os.path.join(os.getcwd(), "config.yaml"), "r") as f:
+        config_dict = yaml.safe_load(f)
     config_dict["work_dir"] = work_dir
     config_dict["script_dir"] = os.getcwd()
     config_dict["_aux_flow_path"] = config_dict["local"]["flow_executable"].copy()
