@@ -1,0 +1,3 @@
+[submodule "bgem"]
+	path = bgem
+	url = git@github.com:GeoMop/bgem.git
