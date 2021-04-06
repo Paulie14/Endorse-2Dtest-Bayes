@@ -181,53 +181,20 @@ class endorse_2Dtest():
     #         raise Exception("Data out of given range [max].")
 
     def collect_results(self, config_dict):
-        # filenames = ["energy_balance.yaml",
-        #              "water_balance.yaml",
-        #              "Heat_AdvectionDiffusion_region_stat.yaml"]
-        #
-        # print("Extracting results...")
-        # # read regions of interest
-        # # bc_regions = ['.fr_left_well', '.left_well', '.fr_right_well', '.right_well']
-        # # out_regions = bc_regions[2:]
-        # with open("regions.yaml", 'r') as f:
-        #     regions_dict = yaml.load(f, yaml.CSafeLoader)
-        #     bc_regions = [*regions_dict["left_well_fracture_regions"], *regions_dict["right_well_fracture_regions"]]
-        #     out_regions = regions_dict["right_well_fracture_regions"]
-        #
-        # n_times = 0
-        # result = []
-        # for variant in config_dict["variants"]:
-        #     print("collecting TH - variant '{}'...".format(variant))
-        #     config_dict[variant]["output_dir"] = "output_" + config_dict[variant]["in_file"]
-        #
-        #     result_files = list()
-        #     result_files.extend([os.path.join(config_dict[variant]["output_dir"], f) for f in filenames])
-        #     files_present = all([os.path.isfile(f) for f in result_files])
-        #     if not files_present:
-        #         raise Exception("Not all result files present.")
-        #     avg_temp, power = endorse_2Dtest.extract_th_results(config_dict[variant]["output_dir"],
-        #                                                           out_regions, bc_regions)
-        #     n_times=len(power)
-        #     endorse_2Dtest.check_data(avg_temp, config_dict["extract"]["temp_min"],
-        #                                 config_dict["extract"]["temp_max"])
-        #     endorse_2Dtest.check_data(power, config_dict["extract"]["power_min"],
-        #                                 config_dict["extract"]["power_max"])
-        #
-        #     result.extend(avg_temp)
-        #     result.extend(power)
-        #
-        # fr_file = "fr_param_stats.yaml"
-        # if os.path.isfile(fr_file):
-        #     with open(fr_file, 'r') as f:
-        #         fr_param_dict = yaml.load(f, yaml.CSafeLoader)
-        #         result.extend([fr_param_dict["n_fracture_elements"]]*n_times)
-        #         result.extend([fr_param_dict["n_contact_elements"]]*n_times)
-        # else:
-        #     raise Exception("Fracture stats file '{}' not present.".format(fr_file))
-        #
-        # print("Extracting results...finished")
-        # return self.empty_result()
-        return []
+        output_dir = config_dict["hm_params"]["output_dir"]
+
+        with open(os.path.join(output_dir, "flow_observe.yaml"), "r") as f:
+            loaded_yaml = yaml.load(f, yaml.CSafeLoader)
+            points = loaded_yaml['points']
+            point_names = [p["name"] for p in points]
+            print("Collecting results for observe points: ", point_names)
+            data = loaded_yaml['data']
+            values = np.array([d["pressure_p0"] for d in data]).transpose()
+            # times = np.array([d["time"] for d in data]).transpose()
+
+            # flatten to format: [Point0_all_all_times, Point1_all_all_times, Point2_all_all_times, ...]
+            res = values.flatten()
+            return res
 
     def call_flow(self, config_dict, param_key, result_files):
         """
@@ -601,8 +568,6 @@ class endorse_2Dtest():
             data = loaded_yaml['data']
             values = np.array([d["pressure_p0"] for d in data]).transpose()
             times = np.array([d["time"] for d in data]).transpose()
-
-            v = values[0, 0:]
 
             fig, ax1 = plt.subplots()
             temp_color = ['red', 'green', 'violet', 'blue']
