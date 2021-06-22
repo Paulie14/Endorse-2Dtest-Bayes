@@ -420,7 +420,7 @@ class endorse_2Dtest():
         print("meshing...")
 
         factory.keep_only(*mesh_groups)
-        factory.remove_duplicate_entities()
+        # factory.remove_duplicate_entities()
         factory.write_brep()
 
         min_el_size = tunnel_mesh_step / 2
