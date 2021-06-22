@@ -1,0 +1,105 @@
+flow123d_version: 3.1.0
+problem: !Coupling_Sequential
+  description: Hydraulic stimulation of fractures connecting two open well ends
+  mesh:
+    mesh_file: <mesh>
+    regions:
+      - !Union
+        name: .outer_boundary
+        regions: [.bottom, .top, .left, .right]
+  flow_equation: !Coupling_Iterative
+    input_fields:
+      - region: BULK
+        biot_alpha: <biot_coefficient>
+        fluid_density: 1000
+    time:
+      # common time unit cannot be used in field formulas
+      common_time_unit: y
+      end_time: 500
+    iteration_parameter: 1 # affects convergence of HM coupling (defaults to 1, lower value sometimes helps)
+    a_tol: 0
+    r_tol: 1e-12
+    flow_equation: !Flow_Richards_LMH
+        nonlinear_solver:
+          linear_solver: !Petsc
+            a_tol: <flow_solver__a_tol>
+            r_tol: <flow_solver__r_tol>
+#            options: <flow_solver__options>
+        input_fields:
+          - region: BULK
+            # https://en.wikipedia.org/wiki/Specific_storage
+            storativity: 2.8e-8 # S = rho * g * (beta_s + nu * beta_w)
+            # bulk compressibility beta_s=0
+            # porosity nu=0.007
+            # water compressibility beta_w=0 1/Pa
+
+          - region: BULK
+            conductivity: <bulk_conductivity>
+            init_pressure: 300
+
+          - region: .outer_boundary
+            bc_type: dirichlet
+            bc_pressure: 300 # 3MPa = p = h*rho*g => h = 300 m
+
+          - region: .tunnel
+            bc_type: dirichlet
+            bc_pressure: 300
+
+        output:
+          times:
+            - step: &step 20
+          fields:
+            - piezo_head_p0
+            - pressure_p0
+            - velocity_p0
+            - region_id
+          observe_fields: [pressure_p0]
+        #balance:
+          #cumulative: true
+        output_stream:
+          file: flow.pvd
+          format: !vtk
+          observe_points: &observe_points
+            - { name: HGT1-5, point: [ 0, 5.0, 0 ] }  # HGT1-5: 3.5 + 1.5
+            - { name: HGT1-4, point: [ 0, 7.5, 0 ] }  # HGT1-4: 3.5 + 4
+            - { name: HGT2-4, point: [ 5.875, 0, 0 ] }  # HGT2-4: 4.375 + 1.5
+            - { name: HGT2-3, point: [ 8.375, 0, 0 ] }  # HGT2-3: 4.375 + 4
+    mechanics_equation:
+        output_stream:
+          file: mechanics.pvd
+          format: !vtk
+          observe_points: *observe_points
+        output:
+          times:
+            - step: *step
+          fields:
+#            - { field: displacement, interpolation: P1_average }
+            - displacement
+            - stress
+            - displacement_divergence
+            - region_id
+          observe_fields: [displacement]
+        solver: !Petsc
+          a_tol: <mechanics_solver__a_tol>
+          r_tol: <mechanics_solver__r_tol>
+          options: <mechanics_solver__options>
+          # -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg
+          #options: -ksp_type cg -pc_type icc -pc_factor_levels 2 -ksp_diagonal_scale -ksp_diagonal_scale_fix -pc_factor_fill 3.0 -ksp_monitor
+        input_fields:
+          - region: BULK
+            young_modulus: 60e9
+            poisson_ratio: 0.2
+
+          - region: .top
+            bc_type: traction
+            bc_traction: [0, -11e6, 0]
+          - region: .right
+            bc_type: traction
+            bc_traction: [-45e6, 0, 0]
+          - region: [.left, .bottom]
+            bc_type: displacement_n  # lateral sides can move in tangential direction
+            bc_displacement: 0
+
+          - region: .tunnel
+            bc_type: stress
+            bc_stress: [45e6, 11e6, 0]

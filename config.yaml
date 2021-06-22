@@ -47,9 +47,11 @@ local:
 #    - /storage/liberec3-tul/home/pavel_exner/WGC2020-THM-MC/wgc2020_model/env/bin/gmsh
 
 
-end_time: &end_time 365
+start_time: &start_time 0
+end_time: &end_time 25
 output_times: &output_times
-  - {begin: 0, step: 2, end: 17}
+#  - {begin: 0, step: 1, end: *start_time}
+  - {begin: *start_time, step: 1, end: 17}
   - {begin: 17, step: 5, end: *end_time}
 
 geometry:
@@ -71,7 +73,9 @@ hm_params:
     in_file: A01_hm
 
     output_times: *output_times
+    start_time: *start_time
     end_time: *end_time
+    bored_time: 18
 
     tunnel_dimX: *tunnel_dimX
     tunnel_dimY: *tunnel_dimY
@@ -83,12 +87,12 @@ hm_params:
     # dynamic viscosity mu=0.001 Pa.s
 
     mechanics_solver__a_tol: 1e-14
-    mechanics_solver__r_tol: 1e-7
+    mechanics_solver__r_tol: 1e-12
     mechanics_solver__options: -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg -ksp_monitor
         # -ksp_type cg -pc_type icc -pc_factor_levels 2 -ksp_diagonal_scale -ksp_diagonal_scale_fix -pc_factor_fill 3.0 -ksp_monitor
 
     flow_solver__a_tol: 1e-14
-    flow_solver__r_tol: 1e-7
+    flow_solver__r_tol: 1e-12
 
     flow_solver__options: -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg -ksp_monitor
         # -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg  -pc_hypre_boomeramg_coarsen_type HMIS -pc_hypre_boomeramg_strong_threshold 0.5  -ksp_monitor
