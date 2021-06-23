@@ -238,8 +238,8 @@ class endorse_2Dtest():
         mesh_file = mesh_name + ".msh"
         mesh_healed = mesh_name + "_healed.msh"
 
-        if os.path.isfile(os.path.join(config_dict["script_dir"], mesh_healed)):
-            shutil.copyfile(os.path.join(config_dict["script_dir"], mesh_healed), mesh_healed)
+        if os.path.isfile(os.path.join(config_dict["common_files_dir"], mesh_healed)):
+            shutil.copyfile(os.path.join(config_dict["common_files_dir"], mesh_healed), mesh_healed)
             return mesh_healed
 
         if not os.path.isfile(mesh_healed):

@@ -11,7 +11,11 @@
 collect_only: False
 mesh_only: False
 
-copy_files: [config.yaml, flow123d_simulation.py, A01_hm_tmpl.yaml]
+copy_files: [config.yaml, flow123d_simulation.py,
+#             A01_hm_tmpl.yaml,
+#             B02ustaleni_hm_tmpl.yaml,
+              B02long_hm_tmpl.yaml,
+              tunnel_mesh_cut_healed.msh]
 
 # The flow executable and arguments to use.
 local:
@@ -70,7 +74,9 @@ mesh_name: tunnel_mesh
 # parameters substituted into the HM model template
 hm_params:
     mesh: tunnel_mesh.msh # healed mesh is used at the end (programmatically replaced)
-    in_file: A01_hm
+#    in_file: A01_hm
+    in_file: B02long_hm
+#    in_file: B02ustaleni_hm
 
     output_times: *output_times
     start_time: *start_time
