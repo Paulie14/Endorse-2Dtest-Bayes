@@ -137,8 +137,6 @@ class endorse_2Dtest():
         if config_dict["collect_only"]:
             return self.collect_results(config_dict)
 
-        mesh_repo = config_dict.get('mesh_repository', None)
-
         print("Creating mesh...")
         # comp_mesh = self.prepare_mesh(config_dict, cut_tunnel=False)
         comp_mesh = self.prepare_mesh(config_dict, cut_tunnel=True)
@@ -238,12 +236,16 @@ class endorse_2Dtest():
         if cut_tunnel:
             mesh_name = mesh_name + "_cut"
         mesh_file = mesh_name + ".msh"
-        if not os.path.isfile(mesh_file):
-            self.make_mesh_A(config_dict, mesh_name, mesh_file, cut_tunnel=cut_tunnel)
-            # self.make_mesh_B(config_dict, mesh_name, mesh_file, cut_tunnel=cut_tunnel)
-
         mesh_healed = mesh_name + "_healed.msh"
+
+        if os.path.isfile(os.path.join(config_dict["script_dir"], mesh_healed)):
+            shutil.copyfile(os.path.join(config_dict["script_dir"], mesh_healed), mesh_healed)
+            return mesh_healed
+
         if not os.path.isfile(mesh_healed):
+            if not os.path.isfile(mesh_file):
+                self.make_mesh_A(config_dict, mesh_name, mesh_file, cut_tunnel=cut_tunnel)
+                # self.make_mesh_B(config_dict, mesh_name, mesh_file, cut_tunnel=cut_tunnel)
             hm = heal_mesh.HealMesh.read_mesh(mesh_file, node_tol=1e-4)
             hm.heal_mesh(gamma_tol=0.01)
             hm.stats_to_yaml(mesh_name + "_heal_stats.yaml")
