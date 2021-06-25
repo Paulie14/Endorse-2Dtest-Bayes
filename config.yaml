@@ -22,11 +22,13 @@ copy_files: [config.yaml, flow123d_simulation.py,
 local:
   flow_executable:
     - /home/paulie/local/flow123d/flow123d_3.1.0/bin/fterm.sh
+#    - /home/paulie/Workspace/flow123d/bin/fterm
     ### for flow123d build (not docker image install)
-    #- --no-term
-    #- rel
+#    - --no-term
+#    - rel
     ### for flow123d (docker image install)
-    #- --version 3.1.0
+    - --version
+    - "3.1.0"
     - --tty
     - "false"
     - --interactive

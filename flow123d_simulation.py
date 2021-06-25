@@ -16,20 +16,6 @@ from bgem.gmsh import heal_mesh
 import matplotlib.pyplot as plt
 
 
-def force_mkdir(path, force=False):
-    """
-    Make directory 'path' with all parents,
-    remove the leaf dir recursively if it already exists.
-    :param path: path to directory
-    :param force: if dir already exists then remove it and create new one
-    :return: None
-    """
-    if force:
-        if os.path.isdir(path):
-            shutil.rmtree(path)
-    os.makedirs(path, mode=0o775, exist_ok=True)
-
-
 def substitute_placeholders(file_in, file_out, params):
     """
     Substitute for placeholders of format '<name>' from the dict 'params'.
@@ -101,17 +87,7 @@ class endorse_2Dtest():
         # TODO: set work dir
         self.work_dir = config["work_dir"]
         self.clean = clean
-
         self._config = config
-
-        # Files in the directory are used by each simulation at that level
-        common_files_dir = os.path.join(self.work_dir, "common_files")
-        force_mkdir(common_files_dir, force=self.clean)
-        config["common_files_dir"] = common_files_dir
-
-        # copy common files
-        for f in config["copy_files"]:
-            shutil.copyfile(os.path.join(config["script_dir"], f), os.path.join(common_files_dir, f))
 
     def set_parameters(self, data_par):
         self._config["hm_params"]["bulk_conductivity"] = data_par[0]
