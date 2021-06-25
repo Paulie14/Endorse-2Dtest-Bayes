@@ -12,7 +12,8 @@ collect_only: False
 mesh_only: False
 
 copy_files: [config.yaml, flow123d_simulation.py,
-#             A01_hm_tmpl.yaml,
+             A01_hm_tmpl.yaml,
+             A02_hm_tmpl.yaml,
 #             B02ustaleni_hm_tmpl.yaml,
               B02long_hm_tmpl.yaml,
               tunnel_mesh_cut_healed.msh]
@@ -54,8 +55,7 @@ local:
 start_time: &start_time 0
 end_time: &end_time 25
 output_times: &output_times
-#  - {begin: 0, step: 1, end: *start_time}
-  - {begin: *start_time, step: 1, end: 17}
+  - {begin: *start_time, step: 2, end: 17}
   - {begin: 17, step: 5, end: *end_time}
 
 geometry:
@@ -75,6 +75,7 @@ mesh_name: tunnel_mesh
 hm_params:
     mesh: tunnel_mesh.msh # healed mesh is used at the end (programmatically replaced)
 #    in_file: A01_hm
+#    in_file: A02_hm
     in_file: B02long_hm
 #    in_file: B02ustaleni_hm
 
