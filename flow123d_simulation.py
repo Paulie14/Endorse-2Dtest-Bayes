@@ -40,6 +40,7 @@ def substitute_placeholders(file_in, file_out, params):
 def check_conv_reasons(log_fname):
     with open(log_fname, "r") as f:
         for line in f:
+            # check linear solvers conv. reason:
             tokens = line.split(" ")
             try:
                 i = tokens.index('convergence')
@@ -47,11 +48,15 @@ def check_conv_reasons(log_fname):
                     value = tokens[i + 2].rstrip(",")
                     conv_reason = int(value)
                     if conv_reason < 0:
-                        print("Failed to converge: ", conv_reason)
-                        return False
+                        print("Some Linear Solver failed to converge (conv_reason: {})".format(conv_reason))
+                        return conv_reason
             except ValueError:
                 continue
-    return True
+            # check HM iterations:
+            if "HM solver did not converge" in line:
+                print("HM solver did not converge.")
+                return -100
+    return 0
 
 
 def check_gmsh_log(lines):
@@ -130,13 +135,16 @@ class endorse_2Dtest():
         print("Running Flow123d - HM...")
         hm_succeed = self.call_flow(config_dict, 'hm_params', result_files=["flow_observe.yaml"])
         if not hm_succeed:
-            raise Exception("HM model failed.")
+            # raise Exception("HM model failed.")
+            # TODO: return tag "Flow123d failed (solver diverged)"
+            return []
         print("Running Flow123d - HM...finished")
 
         self.observe_time_plot(config_dict)
 
         print("Finished computation")
 
+        # TODO: return also tag "Flow123d succeceded"
         return self.collect_results(config_dict)
 
     # def check_data(self, data, minimum, maximum):
@@ -166,9 +174,12 @@ class endorse_2Dtest():
             values = np.array([d["pressure_p0"] for d in data]).transpose()
             # times = np.array([d["time"] for d in data]).transpose()
 
-            # flatten to format: [Point0_all_all_times, Point1_all_all_times, Point2_all_all_times, ...]
-            res = values.flatten()
-            return res
+        if config_dict["clean_sample_dir"]:
+            shutil.rmtree(config_dict["work_dir"])
+
+        # flatten to format: [Point0_all_all_times, Point1_all_all_times, Point2_all_all_times, ...]
+        res = values.flatten()
+        return res
 
     def call_flow(self, config_dict, param_key, result_files):
         """
@@ -199,7 +210,7 @@ class endorse_2Dtest():
             status = completed.returncode == 0
         conv_check = check_conv_reasons(os.path.join(output_dir, "flow123.0.log"))
         print("converged: ", conv_check)
-        return status and conv_check
+        return status and (conv_check >= 0)
 
 
 
