@@ -101,8 +101,11 @@ class endorse_2Dtest():
         self._config["hm_params"]["biot_coefficient"] = data_par[1]
 
     def get_observations(self):
-        res = self.calculate(self._config)
-        return res
+        try:
+            res = self.calculate(self._config)
+            return res
+        except ValueError:
+            return [-1000, []]
 
     def calculate(self, config_dict):
         """
@@ -126,7 +129,7 @@ class endorse_2Dtest():
 
         # collect only
         if config_dict["collect_only"]:
-            return self.collect_results(config_dict)
+            return [2, self.collect_results(config_dict)]
 
         print("Creating mesh...")
         # comp_mesh = self.prepare_mesh(config_dict, cut_tunnel=False)
@@ -139,23 +142,23 @@ class endorse_2Dtest():
         print("Creating mesh...finished")
 
         if config_dict["mesh_only"]:
-            return []
+            return [-10, []]  # [tag, value_list]
 
         # endorse_2Dtest.prepare_hm_input(config_dict)
         print("Running Flow123d - HM...")
         hm_succeed = self.call_flow(config_dict, 'hm_params', result_files=["flow_observe.yaml"])
         if not hm_succeed:
             # raise Exception("HM model failed.")
-            # TODO: return tag "Flow123d failed (solver diverged)"
-            return []
+            # "Flow123d failed (wrong input or solver diverged)"
+            return [-1, []]  # [tag, value_list]
         print("Running Flow123d - HM...finished")
 
         # self.observe_time_plot(config_dict)
 
         print("Finished computation")
 
-        # TODO: return also tag "Flow123d succeceded"
-        return self.collect_results(config_dict)
+        collected_values = self.collect_results(config_dict)
+        return [1, collected_values] # [tag, value_list]
 
     # def check_data(self, data, minimum, maximum):
     #     n_times = len(endorse_2Dtest.result_format()[0].times)
