@@ -12,7 +12,7 @@ pip install --upgrade pip
 pip -V
 
 # pip install wheel # error then installing bih 
-pip install pyyaml attrs numpy ruamel.yaml matplotlib
+pip install pyyaml attrs numpy ruamel.yaml matplotlib mpi4py
 pip install -e bgem
 
 #pip freeze
