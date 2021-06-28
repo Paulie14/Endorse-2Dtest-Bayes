@@ -143,7 +143,7 @@ class endorse_2Dtest():
 
         # endorse_2Dtest.prepare_hm_input(config_dict)
         print("Running Flow123d - HM...")
-        hm_succeed = self.call_flow(config_dict, 'hm_params', result_files=["flow_observe___.yaml"])
+        hm_succeed = self.call_flow(config_dict, 'hm_params', result_files=["flow_observe.yaml"])
         if not hm_succeed:
             # raise Exception("HM model failed.")
             # TODO: return tag "Flow123d failed (solver diverged)"
