@@ -93,6 +93,8 @@ class endorse_2Dtest():
         self.work_dir = config["work_dir"]
         self.clean = clean
         self._config = config
+        self.sample_dir = ""
+        self.sample_counter = -1
 
     def set_parameters(self, data_par):
         self._config["hm_params"]["bulk_conductivity"] = data_par[0]
@@ -110,9 +112,17 @@ class endorse_2Dtest():
         extracting results
         """
 
-        os.chdir(config_dict["work_dir"])
+        # create sample dir
+        self.sample_counter = self.sample_counter + 1
+        self.sample_dir = os.path.join(config_dict["work_dir"],
+                                       "solver_" + str(config_dict["solver_id"]).zfill(2) +
+                                       "_sample_" + str(self.sample_counter).zfill(3))
+        os.makedirs(self.sample_dir, mode=0o775, exist_ok=True)
+        os.chdir(self.sample_dir)
 
-        print("=========================== RUNNING CALCULATION ===========================")
+        print("=========================== RUNNING CALCULATION " +
+              "solver {} ".format(config_dict["solver_id"]).zfill(2) +
+              "sample {} ===========================".format(self.sample_counter).zfill(3))
 
         # collect only
         if config_dict["collect_only"]:
@@ -175,7 +185,7 @@ class endorse_2Dtest():
             # times = np.array([d["time"] for d in data]).transpose()
 
         if config_dict["clean_sample_dir"]:
-            shutil.rmtree(config_dict["work_dir"])
+            shutil.rmtree(self.sample_dir)
 
         # flatten to format: [Point0_all_all_times, Point1_all_all_times, Point2_all_all_times, ...]
         res = values.flatten()

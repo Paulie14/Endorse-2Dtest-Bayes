@@ -11,6 +11,8 @@
 collect_only: False
 mesh_only: False
 
+clean_sample_dir: True
+
 copy_files: [config.yaml, flow123d_simulation.py,
              A01_hm_tmpl.yaml,
              A02_hm_tmpl.yaml,

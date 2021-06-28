@@ -26,17 +26,17 @@ def force_mkdir(path, force=False):
 class Wrapper:
     def __init__(self, solver_id = 0):
 
-        # rep_dir = "/home/paulie/Workspace/Endorse-2Dtest-Bayes/"
         rep_dir = os.path.dirname(os.path.abspath(__file__))
         work_dir = os.path.join(rep_dir, "flow123d_sim")
         # Create working directory if necessary
         os.makedirs(work_dir, mode=0o775, exist_ok=True)
-
-        clean = True
+        os.chdir(work_dir)
 
         # read config file and setup paths
         with open(os.path.join(rep_dir, "config.yaml"), "r") as f:
             config_dict = yaml.safe_load(f)
+
+        clean = config_dict["clean_sample_dir"]
 
         # Files in the directory are used by each simulation at that level
         common_files_dir = os.path.join(work_dir, "common_files")
@@ -49,9 +49,7 @@ class Wrapper:
             if not os.path.isfile(filepath):
                 shutil.copyfile(os.path.join(rep_dir, f), filepath)
 
-        # create sample dir
-        work_dir = os.path.join(work_dir, "sample_" + str(solver_id).zfill(3))
-        os.makedirs(work_dir, mode=0o775, exist_ok=True)
+        config_dict["solver_id"] = solver_id
         config_dict["work_dir"] = work_dir
         config_dict["script_dir"] = rep_dir
         config_dict["_aux_flow_path"] = config_dict["local"]["flow_executable"].copy()
