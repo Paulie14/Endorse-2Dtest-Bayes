@@ -56,11 +56,11 @@ problem: !Coupling_Sequential
 
         output:
           times: <output_times>
-          fields:
-            - piezo_head_p0
-            - pressure_p0
-            - velocity_p0
-            - region_id
+          fields: []
+#            - piezo_head_p0
+#            - pressure_p0
+#            - velocity_p0
+#            - region_id
           observe_fields: [pressure_p0]
         #balance:
           #cumulative: true
@@ -76,16 +76,16 @@ problem: !Coupling_Sequential
         output_stream:
           file: mechanics.pvd
           format: !vtk
-          observe_points: *observe_points
+#          observe_points: *observe_points
         output:
           times: <output_times>
-          fields:
+          fields: []
 #            - { field: displacement, interpolation: P1_average }
-            - displacement
-            - stress
-            - displacement_divergence
-            - region_id
-          observe_fields: [displacement]
+#            - displacement
+#            - stress
+#            - displacement_divergence
+#            - region_id
+#          observe_fields: [displacement]
         solver: !Petsc
           a_tol: <mechanics_solver__a_tol>
           r_tol: <mechanics_solver__r_tol>

@@ -57,10 +57,10 @@ local:
 
 
 start_time: &start_time 0
-end_time: &end_time 25
+end_time: &end_time 250
 output_times: &output_times
-  - {begin: *start_time, step: 2, end: 17}
-  - {begin: 17, step: 5, end: *end_time}
+  - {begin: *start_time, step: 10, end: 17}
+  - {begin: 17, step: 10, end: *end_time}
 
 geometry:
   # depth of the center of the box and of the coordinate system
@@ -79,8 +79,8 @@ mesh_name: tunnel_mesh
 hm_params:
     mesh: tunnel_mesh.msh # healed mesh is used at the end (programmatically replaced)
 #    in_file: A01_hm
-#    in_file: A02_hm
-    in_file: B02long_hm
+    in_file: A02_hm
+#    in_file: B02long_hm
 #    in_file: B02ustaleni_hm
 
     output_times: *output_times
@@ -98,12 +98,12 @@ hm_params:
     # dynamic viscosity mu=0.001 Pa.s
 
     mechanics_solver__a_tol: 1e-14
-    mechanics_solver__r_tol: 1e-12
+    mechanics_solver__r_tol: 1e-10
     mechanics_solver__options: -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg -ksp_monitor
         # -ksp_type cg -pc_type icc -pc_factor_levels 2 -ksp_diagonal_scale -ksp_diagonal_scale_fix -pc_factor_fill 3.0 -ksp_monitor
 
     flow_solver__a_tol: 1e-14
-    flow_solver__r_tol: 1e-12
+    flow_solver__r_tol: 1e-10
 
-    flow_solver__options: -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg -ksp_monitor
+#    flow_solver__options: -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg -ksp_monitor
         # -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg  -pc_hypre_boomeramg_coarsen_type HMIS -pc_hypre_boomeramg_strong_threshold 0.5  -ksp_monitor
