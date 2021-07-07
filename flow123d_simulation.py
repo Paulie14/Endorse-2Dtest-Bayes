@@ -129,7 +129,7 @@ class endorse_2Dtest():
 
         # collect only
         if config_dict["collect_only"]:
-            return [2, self.collect_results(config_dict)]
+            return 2, self.collect_results(config_dict)
 
         print("Creating mesh...")
         # comp_mesh = self.prepare_mesh(config_dict, cut_tunnel=False)
@@ -142,7 +142,7 @@ class endorse_2Dtest():
         print("Creating mesh...finished")
 
         if config_dict["mesh_only"]:
-            return [-10, []]  # [tag, value_list]
+            return -10, []  # tag, value_list
 
         # endorse_2Dtest.prepare_hm_input(config_dict)
         print("Running Flow123d - HM...")
@@ -150,7 +150,7 @@ class endorse_2Dtest():
         if not hm_succeed:
             # raise Exception("HM model failed.")
             # "Flow123d failed (wrong input or solver diverged)"
-            return [-1, []]  # [tag, value_list]
+            return -1, []  # tag, value_list
         print("Running Flow123d - HM...finished")
 
         # self.observe_time_plot(config_dict)
@@ -158,7 +158,7 @@ class endorse_2Dtest():
         print("Finished computation")
 
         collected_values = self.collect_results(config_dict)
-        return [1, collected_values] # [tag, value_list]
+        return 1, collected_values  # tag, value_list
 
     # def check_data(self, data, minimum, maximum):
     #     n_times = len(endorse_2Dtest.result_format()[0].times)
