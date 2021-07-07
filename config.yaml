@@ -99,7 +99,7 @@ hm_params:
 
     mechanics_solver__a_tol: 1e-14
     mechanics_solver__r_tol: 1e-10
-    mechanics_solver__options: -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg -ksp_monitor
+#    mechanics_solver__options: -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg -ksp_monitor
         # -ksp_type cg -pc_type icc -pc_factor_levels 2 -ksp_diagonal_scale -ksp_diagonal_scale_fix -pc_factor_fill 3.0 -ksp_monitor
 
     flow_solver__a_tol: 1e-14

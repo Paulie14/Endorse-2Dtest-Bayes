@@ -89,7 +89,7 @@ problem: !Coupling_Sequential
         solver: !Petsc
           a_tol: <mechanics_solver__a_tol>
           r_tol: <mechanics_solver__r_tol>
-          options: <mechanics_solver__options>
+#          options: <mechanics_solver__options>
         input_fields:
           - region: BULK
             young_modulus: 60e9
