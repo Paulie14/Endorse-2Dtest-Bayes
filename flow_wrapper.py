@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 
 
-
 import os
+import sys
 import shutil
 import ruamel.yaml as yaml
+import numpy as np
 
+rep_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(rep_dir)
+
+import surrDAMH.modules.transformations as trans
 from flow123d_simulation import endorse_2Dtest
-
 
 def force_mkdir(path, force=False):
     """
@@ -24,9 +28,8 @@ def force_mkdir(path, force=False):
 
 
 class Wrapper:
-    def __init__(self, solver_id = 0):
+    def __init__(self, solver_id=0):
 
-        rep_dir = os.path.dirname(os.path.abspath(__file__))
         work_dir = os.path.join(rep_dir, "flow123d_sim")
         # Create working directory if necessary
         os.makedirs(work_dir, mode=0o775, exist_ok=True)
@@ -58,8 +61,11 @@ class Wrapper:
         self.sim = endorse_2Dtest(config_dict, clean=clean)
         self.no_parameters = 2
         
-    def set_parameters(self,data_par):
-        self.sim.set_parameters(data_par)
+    def set_parameters(self, data_par):
+        conductivity = trans.normal_to_lognormal(data_par[0])
+        biot = trans.normal_to_beta(data_par[1], alfa=5, beta=5)
+        self.sim.set_parameters(np.array([conductivity, biot]))
+        # self.sim.set_parameters(data_par)
         
     def get_observations(self):
         res = self.sim.get_observations()
