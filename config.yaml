@@ -37,6 +37,7 @@ local:
     - "false"
     ### for both
     - run
+#    - --no_profiler
   np: 1
   gmsh_executable:
     - /home/paulie/Workspace/Endorse-2Dtest-Bayes/venv/bin/gmsh

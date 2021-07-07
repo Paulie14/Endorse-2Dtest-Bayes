@@ -214,7 +214,7 @@ class endorse_2Dtest():
             substitute_placeholders(os.path.join(config_dict["common_files_dir"], fname + '_tmpl.yaml'),
                                     fname + '.yaml',
                                     params)
-            arguments.extend(['--no_profiler', '--output_dir', output_dir, fname + ".yaml"])
+            arguments.extend(['--output_dir', output_dir, fname + ".yaml"])
             print("Running: ", " ".join(arguments))
             with open(fname + "_stdout", "w") as stdout:
                 with open(fname + "_stderr", "w") as stderr:
