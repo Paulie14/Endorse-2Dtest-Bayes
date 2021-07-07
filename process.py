@@ -7,5 +7,5 @@ if __name__ == "__main__":
     t = time.time()
     res = wrap.get_observations()
     print(res)
-    print("LEN:", len(res))
+    print("LEN:", len(res[1]))
     print("TIME:", time.time()-t)

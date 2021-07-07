@@ -23,7 +23,8 @@ copy_files: [config.yaml, flow123d_simulation.py,
 # The flow executable and arguments to use.
 local:
   flow_executable:
-    - /home/paulie/local/flow123d/flow123d_3.1.0/bin/fterm.sh
+    - /home/domesova/flow123d_3.1.0/bin/fterm.sh
+#    - /home/paulie/local/flow123d/flow123d_3.1.0/bin/fterm.sh
 #    - /home/paulie/Workspace/flow123d/bin/fterm
     ### for flow123d build (not docker image install)
 #    - --no-term
@@ -58,7 +59,7 @@ local:
 
 
 start_time: &start_time 0
-end_time: &end_time 250
+end_time: &end_time 140
 output_times: &output_times
   - {begin: *start_time, step: 10, end: 17}
   - {begin: 17, step: 10, end: *end_time}
