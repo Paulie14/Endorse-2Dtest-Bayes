@@ -3,10 +3,12 @@ import sys
 import json
 import time
 
+import flow_wrapper
+from measured_data import MeasuredData
+
 
 def just_run_flow123d():
-    from flow_wrapper import Wrapper
-    wrap = Wrapper(solver_id=1)
+    wrap = flow_wrapper.Wrapper(solver_id=1)
     wrap.set_parameters(data_par=[6e-15, 0.17])
     t = time.time()
     res = wrap.get_observations()
@@ -41,9 +43,28 @@ if __name__ == "__main__":
     basename = os.path.basename(problem_path)
     problem_name, fext = os.path.splitext(basename)
 
+    # setup paths and directories
+    config_dict = flow_wrapper.setup_config()
+    flow_wrapper.setup_dirs(config_dict)
+
+    # prepare measured data as observations
+    md = MeasuredData(config_dict)
+    md.initialize()
+
+    md.plot_all_data()
+    md.plot_interp_data()
+
+    boreholes = ["HGT1-5", "HGT1-4", "HGT2-4", "HGT2-3"]
+    times, values = md.generate_measured_samples(boreholes)
+
     with open(problem_path) as f:
         conf = json.load(f)
+        conf["problem_parameters"]["observations"] = values
 
+    with open("/home/paulie/Workspace/Endorse-2Dtest-Bayes/minimal_flow_PE.json", "w") as f:
+        json.dump(conf, f, indent=4)
+
+    # run sampling
     command = None
     if visualize:
         os.error("Visualization not implemented.")

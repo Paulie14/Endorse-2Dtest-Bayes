@@ -5,9 +5,6 @@ import numpy as np
 import scipy.fft as fft
 from scipy import interpolate
 
-import ruamel.yaml as yaml
-import json
-
 
 class MeasuredData:
     def __init__(self, config):
@@ -165,18 +162,14 @@ class MeasuredData:
 
 
 if __name__ == "__main__":
-    rep_dir = os.path.dirname(os.path.abspath(__file__))
-    work_dir = os.path.join(rep_dir, "flow123d_sim")
-    # Create working directory if necessary
-    os.makedirs(work_dir, mode=0o775, exist_ok=True)
-    os.chdir(work_dir)
 
-    # read config file and setup paths
-    with open(os.path.join(rep_dir, "config.yaml"), "r") as f:
-        config_dict = yaml.safe_load(f)
+    import json
+    import flow_wrapper
 
-    config_dict["work_dir"] = work_dir
-    config_dict["script_dir"] = rep_dir
+    config_dict = flow_wrapper.setup_config()
+
+    os.makedirs(config_dict["work_dir"], mode=0o775, exist_ok=True)
+    os.chdir(config_dict["work_dir"])
 
     md = MeasuredData(config_dict)
     md.initialize()
