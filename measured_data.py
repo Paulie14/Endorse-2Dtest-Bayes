@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.fft as fft
 from scipy import interpolate
-
+from auxiliary_functions import generate_time_axis
 
 class MeasuredData:
     def __init__(self, config):
@@ -23,17 +23,7 @@ class MeasuredData:
             self.interp_data[bname] = interpolate.CubicSpline(t, p)
 
     def generate_measured_samples(self, boreholes):
-        end_time = float(self._config["end_time"])
-        output_times = self._config["output_times"]
-
-        # create time axis
-        times = []
-        for dt in output_times:
-            b = float(dt["begin"])
-            s = float(dt["step"])
-            e = float(dt["end"])
-            times.extend(np.arange(b, e, s))
-        times.append(end_time)
+        times = generate_time_axis(self._config)
 
         # sample measured data at generated times
         values = []
