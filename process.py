@@ -60,6 +60,7 @@ if __name__ == "__main__":
     with open(problem_path) as f:
         conf = json.load(f)
         conf["problem_parameters"]["observations"] = values
+        conf["no_observations"] = len(values)
 
     with open("/home/paulie/Workspace/Endorse-2Dtest-Bayes/minimal_flow_PE.json", "w") as f:
         json.dump(conf, f, indent=4)

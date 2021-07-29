@@ -14,6 +14,7 @@ from typing import List
 # from bgem.gmsh import heal_mesh
 
 import matplotlib.pyplot as plt
+import auxiliary_functions
 
 
 def substitute_placeholders(file_in, file_out, params):
@@ -178,14 +179,24 @@ class endorse_2Dtest():
     def collect_results(self, config_dict):
         output_dir = config_dict["hm_params"]["output_dir"]
 
+        # the times defined in input
+        times = np.array(auxiliary_functions.generate_time_axis(config_dict))
         with open(os.path.join(output_dir, "flow_observe.yaml"), "r") as f:
             loaded_yaml = yaml.load(f, yaml.CSafeLoader)
             points = loaded_yaml['points']
             point_names = [p["name"] for p in points]
             print("Collecting results for observe points: ", point_names)
             data = loaded_yaml['data']
-            values = np.array([d["pressure_p0"] for d in data]).transpose()
-            # times = np.array([d["time"] for d in data]).transpose()
+            values = np.array([d["pressure_p0"] for d in data])
+            obs_times = np.array([d["time"] for d in data]).transpose()
+
+            # check that observe data are computed at all times of defined time axis
+            all_times_computed = np.alltrue(np.isin(times, obs_times))
+            if not all_times_computed:
+                raise Exception("Observe data not computed at all times as defined by input!")
+            # skip the times not specified in input
+            t_indices = np.isin(obs_times, times).nonzero()
+            values = values[t_indices].transpose()
 
         if config_dict["clean_sample_dir"]:
             shutil.rmtree(self.sample_dir)
