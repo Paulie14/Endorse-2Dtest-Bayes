@@ -12,20 +12,7 @@ sys.path.append(rep_dir)
 
 import surrDAMH.modules.transformations as trans
 from flow123d_simulation import endorse_2Dtest
-
-
-def force_mkdir(path, force=False):
-    """
-    Make directory 'path' with all parents,
-    remove the leaf dir recursively if it already exists.
-    :param path: path to directory
-    :param force: if dir already exists then remove it and create new one
-    :return: None
-    """
-    if force:
-        if os.path.isdir(path):
-            shutil.rmtree(path)
-    os.makedirs(path, mode=0o775, exist_ok=True)
+import aux_functions
 
 
 def setup_config():
@@ -57,7 +44,7 @@ def setup_dirs(config_dict):
     clean = config_dict["clean_sample_dir"]
     common_files_dir = config_dict["common_files_dir"]
 
-    force_mkdir(common_files_dir, force=clean)
+    aux_functions.force_mkdir(common_files_dir, force=clean)
     # copy common files
     for f in config_dict["copy_files"]:
         filepath = os.path.join(common_files_dir, f)

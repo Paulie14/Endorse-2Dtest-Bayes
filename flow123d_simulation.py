@@ -14,76 +14,7 @@ from typing import List
 # from bgem.gmsh import heal_mesh
 
 import matplotlib.pyplot as plt
-import auxiliary_functions
-
-
-def substitute_placeholders(file_in, file_out, params):
-    """
-    Substitute for placeholders of format '<name>' from the dict 'params'.
-    :param file_in: Template file.
-    :param file_out: Values substituted.
-    :param params: { 'name': value, ...}
-    """
-    used_params = []
-    with open(file_in, 'r') as src:
-        text = src.read()
-    for name, value in params.items():
-        placeholder = '<%s>' % name
-        n_repl = text.count(placeholder)
-        if n_repl > 0:
-            used_params.append(name)
-            text = text.replace(placeholder, str(value))
-    with open(file_out, 'w') as dst:
-        dst.write(text)
-    return used_params
-
-
-def check_conv_reasons(log_fname):
-    with open(log_fname, "r") as f:
-        for line in f:
-            # check linear solvers conv. reason:
-            tokens = line.split(" ")
-            try:
-                i = tokens.index('convergence')
-                if tokens[i + 1] == 'reason':
-                    value = tokens[i + 2].rstrip(",")
-                    conv_reason = int(value)
-                    if conv_reason < 0:
-                        print("Some Linear Solver failed to converge (conv_reason: {})".format(conv_reason))
-                        return conv_reason
-            except ValueError:
-                continue
-            # check HM iterations:
-            if "HM solver did not converge" in line:
-                print("HM solver did not converge.")
-                return -100
-    return 0
-
-
-def check_gmsh_log(lines):
-    """
-    Search for "No elements in volume" message -> could not mesh the volume -> empty mesh.
-    # PLC Error:  A segment and a facet intersect at point (-119.217,65.5762,-40.8908).
-    #   Segment: [70,2070] #-1 (243)
-    #   Facet:   [3147,9829,13819] #482
-    # Info    : failed to recover constrained lines/triangles
-    # Info    : function failed
-    # Info    : function failed
-    # Error   : HXT 3D mesh failed
-    # Error   : No elements in volume 1
-    # Info    : Done meshing 3D (Wall 0.257168s, CPU 0.256s)
-    # Info    : 13958 nodes 34061 elements
-    # Error   : ------------------------------
-    # Error   : Mesh generation error summary
-    # Error   :     0 warnings
-    # Error   :     2 errors
-    # Error   : Check the full log for details
-    # Error   : ------------------------------
-    """
-    empty_volume_error = "No elements in volume"
-    res = [line for line in lines if empty_volume_error in line]
-    if len(res) != 0:
-        raise Exception("GMSH error - No elements in volume")
+import aux_functions
 
 
 class endorse_2Dtest():
@@ -180,7 +111,7 @@ class endorse_2Dtest():
         output_dir = config_dict["hm_params"]["output_dir"]
 
         # the times defined in input
-        times = np.array(auxiliary_functions.generate_time_axis(config_dict))
+        times = np.array(aux_functions.generate_time_axis(config_dict))
         with open(os.path.join(output_dir, "flow_observe.yaml"), "r") as f:
             loaded_yaml = yaml.load(f, yaml.CSafeLoader)
             points = loaded_yaml['points']
@@ -222,9 +153,11 @@ class endorse_2Dtest():
         if all([os.path.isfile(os.path.join(output_dir, f)) for f in result_files]):
             status = True
         else:
-            substitute_placeholders(os.path.join(config_dict["common_files_dir"], fname + '_tmpl.yaml'),
-                                    fname + '.yaml',
-                                    params)
+            aux_functions.substitute_placeholders(
+                os.path.join(config_dict["common_files_dir"],
+                fname + '_tmpl.yaml'),
+                fname + '.yaml',
+                params)
             arguments.extend(['--output_dir', output_dir, fname + ".yaml"])
             print("Running: ", " ".join(arguments))
             with open(fname + "_stdout", "w") as stdout:
@@ -232,7 +165,7 @@ class endorse_2Dtest():
                     completed = subprocess.run(arguments, stdout=stdout, stderr=stderr)
             print("Exit status: ", completed.returncode)
             status = completed.returncode == 0
-        conv_check = check_conv_reasons(os.path.join(output_dir, "flow123.0.log"))
+        conv_check = aux_functions.check_conv_reasons(os.path.join(output_dir, "flow123.0.log"))
         print("converged: ", conv_check)
         return status and (conv_check >= 0)
 
