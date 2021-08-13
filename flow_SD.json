@@ -4,7 +4,7 @@
     "no_observations": 128,
     "problem_parameters": {
         "prior_mean": [-35, 0],
-        "prior_std": [5,1],
+        "prior_std": [3,1],
         "observations": [3.00000000e+02,  5.07678897e+02,  6.53483570e+02,  6.74320980e+02,
         6.74592014e+02,  6.74901969e+02,  6.75278086e+02,  6.75542602e+02,
         6.75667447e+02,  6.75577129e+02,  6.75249971e+02,  6.74177165e+02,
@@ -48,34 +48,40 @@
     "solver_init_name": "Wrapper",
     "solver_returns_tag": true,
     "save_raw_data": true,
+    "initial_sample_type": "prior",
     "solver_parameters": {
     },
     "no_solvers": 30,
     "samplers_list": [
         {
             "type": "MH",
-            "max_samples": 10,
-            "time_limit": 3600,
-            "proposal_std": [1.0,0.5],
+            "max_samples": 100000,
+            "time_limit": 7200,
+            "proposal_std": [0.3,0.3],
             "surrogate_is_updated": true
         },
         {
             "type": "DAMH",
-            "max_samples": 100,
-            "time_limit": 14400,
-            "proposal_std": [1.0,0.5],
+            "max_samples": 100000,
+            "time_limit": 7200,
+            "proposal_std": [0.3,0.3],
             "surrogate_is_updated": true
         },
         {
             "type": "DAMH",
-            "max_samples": 1000,
-            "time_limit": 14400,
-            "proposal_std": [1.0,0.5],
+            "max_samples": 100000,
+            "time_limit": 7200,
+            "proposal_std": [0.3,0.3],
             "surrogate_is_updated": false
         }
     ],
-    "surrogate_type": "poly",
+    "surrogate_type": "rbf",
+    "surr_solver_parameters": {
+        "kernel_type": 1
+    },
     "surr_updater_parameters": {
-        "max_degree": 8
+        "kernel_type": 1,
+        "no_keep": 500,
+        "expensive": false
     }
 }

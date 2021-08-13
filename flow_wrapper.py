@@ -10,7 +10,7 @@ import numpy as np
 rep_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(rep_dir)
 
-import surrDAMH.modules.transformations as trans
+import transformations as trans
 from flow123d_simulation import endorse_2Dtest
 import aux_functions
 
