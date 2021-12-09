@@ -20,6 +20,10 @@ def just_run_flow123d():
 
 if __name__ == "__main__":
 
+    # setup paths and directories
+    config_dict = flow_wrapper.setup_config()
+    flow_wrapper.setup_dirs(config_dict)
+
     # JUST RUN FLOW123D FOR TESTING
     # just_run_flow123d()
 
@@ -43,10 +47,6 @@ if __name__ == "__main__":
     basename = os.path.basename(problem_path)
     problem_name, fext = os.path.splitext(basename)
 
-    # setup paths and directories
-    config_dict = flow_wrapper.setup_config()
-    flow_wrapper.setup_dirs(config_dict)
-
     # prepare measured data as observations
     md = MeasuredData(config_dict)
     md.initialize()
@@ -62,7 +62,7 @@ if __name__ == "__main__":
         conf["problem_parameters"]["observations"] = values
         conf["no_observations"] = len(values)
 
-    with open("/home/paulie/Workspace/Endorse-2Dtest-Bayes/minimal_flow_PE.json", "w") as f:
+    with open(problem_path, "w") as f:
         json.dump(conf, f, indent=4)
 
     # run sampling
