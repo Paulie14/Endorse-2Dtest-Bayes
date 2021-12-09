@@ -85,7 +85,8 @@ class endorse_2Dtest():
             return -1, []  # tag, value_list
         print("Running Flow123d - HM...finished")
 
-        # self.observe_time_plot(config_dict)
+        if self._config["make_plots"]:
+            self.observe_time_plot(config_dict)
 
         print("Finished computation")
 

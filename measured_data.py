@@ -67,6 +67,10 @@ class MeasuredData:
         self.plot_data_set(bnames_ch, data_ch, ax1, linestyle='solid')
         self.plot_data_set(bnames_rq, data_rq, ax1, linestyle='dotted')
 
+        props = dict(boxstyle='square', facecolor='white', alpha=0.25)
+        ax1.text(0.17, 0.97, "rutquist(dotted)\nchandler(solid)", transform=ax1.transAxes, fontsize=9,
+                 verticalalignment='top', bbox=props)
+
         ax1.tick_params(axis='y')
         ax1.legend(ncol=3)
 
