@@ -61,6 +61,10 @@ if __name__ == "__main__":
         conf = json.load(f)
         conf["problem_parameters"]["observations"] = values
         conf["no_observations"] = len(values)
+        conf["noise_type"] = "Gaussian_process"
+        conf["noise_grid"] = times
+        conf["noise_parameters"] = [[30, 50]] * 4
+        conf["solver_module_path"] = os.path.join(config_dict["script_dir"], "flow_wrapper.py")
 
     with open(problem_path, "w") as f:
         json.dump(conf, f, indent=4)
@@ -89,4 +93,5 @@ if __name__ == "__main__":
     rep_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(os.path.join(rep_dir, "MCMC-Bayes-python"))
     print(command)
+    # exit(0)
     os.system(command)
