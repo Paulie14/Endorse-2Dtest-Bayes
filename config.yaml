@@ -14,7 +14,7 @@ make_plots: True
 
 clean_sample_dir: True
 
-copy_files: [config.yaml, flow123d_simulation.py,
+copy_files: [config.yaml, config_mcmc_bayes.json, flow123d_simulation.py,
              A01_hm_tmpl.yaml,
              A02_hm_tmpl.yaml,
 #             B02ustaleni_hm_tmpl.yaml,
@@ -24,22 +24,25 @@ copy_files: [config.yaml, flow123d_simulation.py,
 # The flow executable and arguments to use.
 local:
   flow_executable:
-    - /home/domesova/flow123d_3.1.0/bin/fterm.sh
+    ### this is the simplest case when using inside docker (or singularity) image
+    - flow123d
+    ### this is for installed Flow123d package or individual build
+#    - /home/domesova/flow123d_3.1.0/bin/fterm.sh
 #    - /home/paulie/local/flow123d/flow123d_3.1.0/bin/fterm.sh
 #    - /home/paulie/Workspace/flow123d/bin/fterm
-    ### for flow123d build (not docker image install)
+    ### for flow123d individual build (not docker image install)
 #    - --no-term
 #    - rel
     ### for flow123d (docker image install)
-    - --version
-    - "3.1.0"
-    - --tty
-    - "false"
-    - --interactive
-    - "false"
-    ### for both
-    - run
-#    - --no_profiler
+#    - --version
+#    - "3.1.0"
+#    - --tty
+#    - "false"
+#    - --interactive
+#    - "false"
+    ### this is for both installed Flow123d package or individual build
+#    - run
+    - --no_profiler
   np: 1
   gmsh_executable:
     - /home/paulie/Workspace/Endorse-2Dtest-Bayes/venv/bin/gmsh
@@ -100,13 +103,13 @@ hm_params:
     # permeability k=6e-22 m2
     # dynamic viscosity mu=0.001 Pa.s
 
-    mechanics_solver__a_tol: 1e-14
-    mechanics_solver__r_tol: 1e-10
-#    mechanics_solver__options: -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg -ksp_monitor
+    mechanics_solver__a_tol: 0
+    mechanics_solver__r_tol: 1e-12
+    mechanics_solver__options: -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg #-ksp_monitor
         # -ksp_type cg -pc_type icc -pc_factor_levels 2 -ksp_diagonal_scale -ksp_diagonal_scale_fix -pc_factor_fill 3.0 -ksp_monitor
 
-    flow_solver__a_tol: 1e-14
-    flow_solver__r_tol: 1e-10
+    flow_solver__a_tol: 0
+    flow_solver__r_tol: 1e-12
 
-#    flow_solver__options: -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg -ksp_monitor
+    flow_solver__options: -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg #-ksp_monitor
         # -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg  -pc_hypre_boomeramg_coarsen_type HMIS -pc_hypre_boomeramg_strong_threshold 0.5  -ksp_monitor

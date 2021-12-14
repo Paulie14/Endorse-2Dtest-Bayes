@@ -18,19 +18,19 @@ problem: !Coupling_Sequential
       common_time_unit: d
     iteration_parameter: 1 # affects convergence of HM coupling (defaults to 1, lower value sometimes helps)
     a_tol: 0
-    r_tol: 1e-8
+    r_tol: 1e-6
     flow_equation: !Flow_Richards_LMH
         nonlinear_solver:
           linear_solver: !Petsc
             a_tol: <flow_solver__a_tol>
             r_tol: <flow_solver__r_tol>
-#            options: <flow_solver__options>
+            options: <flow_solver__options>
         input_fields:
           - region: BULK
             conductivity: <bulk_conductivity>
             # https://en.wikipedia.org/wiki/Specific_storage
-            storativity: 2.8e-8 # S = rho * g * (beta_s + nu * beta_w)
-            # bulk compressibility beta_s=0
+            storativity: 3.28e-7 # S = rho * g * (beta_s + nu * beta_w)
+            # bulk compressibility beta_s=1/K = (3(1-2pr)/E)
             # porosity nu=0.007
             # water compressibility beta_w=0 1/Pa
             init_pressure: 300
