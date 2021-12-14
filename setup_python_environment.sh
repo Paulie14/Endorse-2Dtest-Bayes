@@ -9,8 +9,8 @@ which pip
 pip install --upgrade pip
 pip -V
 
-# already installed in singularity: numpy scipy ruamel.yaml
-pip install matplotlib
+# already installed in image: numpy
+pip install matplotlib scipy ruamel.yaml
 # if we want to install our own git submodules
 # pip install -e bgem
 

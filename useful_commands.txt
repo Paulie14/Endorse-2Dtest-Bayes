@@ -1,0 +1,20 @@
+
+open container in Docker:
+> ./endorse_fterm
+
+run Flow123d directly:
+> ./endorse_fterm run --help
+> ./endorse_fterm run input.yaml
+
+open container through singularity:
+> singularity shell -B ../../workspace/:/../../workspace docker://flow123d/ci-gnu:master_1c00063e5
+> singularity shell -B ../../workspace/:/../../workspace docker://flow123d/geomop-base-gnu:3.1.0
+> singularity shell -B ../../workspace/:/../../workspace docker://flow123d/flow-dev-gnu-rel:3.1.0
+
+activate virtual environment
+> source venv/bin/activate
+
+run the process:
+> python3 process.py /home/paulie/Workspace/Endorse-2Dtest-Bayes//config_mcmc_bayes.json 2
+> python3 process.py /auto/liberec3-tul/home/pavel_exner/workspace/Endorse-2Dtest-Bayes/config_mcmc_bayes.json 2
+
