@@ -1,7 +1,7 @@
 {
     "debug": false,
     "no_parameters": 2,
-    "_comment": "solver_module_path will be set by automatically from process.py",
+    "_comment": "solver_module_path will be set automatically from process.py",
     "no_observations": 0,
     "problem_parameters": {
         "prior_mean": [
@@ -9,15 +9,15 @@
             0
         ],
         "prior_std": [
-            5,
+            3,
             1
         ],
-        "_comment": "observations will be set by measured_data.py automatically",
+        "_comment1": "observations will be set by measured_data.py automatically",
         "observations": [],
         "noise_std": 10.0
     },
-    "_comment": "solver_module_path will be set automatically from process.py",
-    "solver_module_path": "/home/paulie/Workspace/Endorse-2Dtest-Bayes/flow_wrapper.py",
+    "_comment2": "solver_module_path will be set automatically from process.py",
+    "solver_module_path": "Endorse-2Dtest-Bayes/flow_wrapper.py",
     "solver_module_name": "flow_wrapper",
     "solver_init_name": "Wrapper",
     "solver_returns_tag": true,

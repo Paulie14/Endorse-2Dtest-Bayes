@@ -85,12 +85,16 @@ if __name__ == "__main__":
         sampler = " -n " + str(N) + opt + "python3 -m mpi4py surrDAMH/process_SAMPLER.py "
         solver = " -n 1" + opt + "python3 -m mpi4py surrDAMH/process_SOLVER.py " + problem_path + " "
         collector = " -n 1" + opt + "python3 -m mpi4py surrDAMH/process_COLLECTOR.py "
-        if "surrogate_type" in conf.keys():
-            command = "mpirun" + sampler + ":" + solver + ":" + collector
-        else:
-            command = "mpirun" + sampler + ":" + solver
 
-    rep_dir = os.path.dirname(os.path.abspath(__file__))
+        # possibly change to particular mpirun for testing
+        # mpirun = "/usr/local/mpich_3.4.2/bin/mpirun"
+        mpirun = "mpirun"
+        if "surrogate_type" in conf.keys():
+            command = mpirun + sampler + ":" + solver + ":" + collector
+        else:
+            command = mpirun + sampler + ":" + solver
+
+    rep_dir = config_dict["script_dir"]
     os.chdir(os.path.join(rep_dir, "MCMC-Bayes-python"))
     print(command)
     # exit(0)

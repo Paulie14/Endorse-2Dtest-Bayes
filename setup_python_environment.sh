@@ -1,19 +1,18 @@
 #!/bin/bash
-echo "[Metacentrum] Make sure you called 'source load_modules.sh' before!"
 echo "Creating python environment.."
-python3 -m venv venv
+python3 -m venv --system-site-packages venv
 
-# source ./load_modules.sh
 source venv/bin/activate
-python --version
+python3 --version
 which python
 which pip
 pip install --upgrade pip
 pip -V
 
-# pip install wheel # error then installing bih 
-pip install pyyaml attrs numpy ruamel.yaml matplotlib mpi4py
-pip install -e bgem
+# already installed in singularity: numpy scipy ruamel.yaml
+pip install matplotlib
+# if we want to install our own git submodules
+# pip install -e bgem
 
 #pip freeze
 deactivate
