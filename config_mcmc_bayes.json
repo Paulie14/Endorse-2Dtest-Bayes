@@ -21,11 +21,11 @@
     ],
     "problem_parameters": {
         "_comment_prior": "if prior_mean and prior_std is not specified, default internal distribution is N(0,1)",
-        "_prior_mean": [
+        "prior_mean": [
             0,
             0
         ],
-        "_prior_std": [
+        "prior_std": [
             1,
             1
         ],
