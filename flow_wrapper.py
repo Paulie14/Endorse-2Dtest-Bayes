@@ -64,10 +64,10 @@ class Wrapper:
         self.no_parameters = 2
         
     def set_parameters(self, data_par):
-        conductivity = trans.normal_to_lognormal(data_par[0])
-        biot = trans.normal_to_beta(data_par[1], alfa=5, beta=5)
-        self.sim.set_parameters(np.array([conductivity, biot]))
-        # self.sim.set_parameters(data_par)
+        # conductivity = trans.normal_to_lognormal(data_par[0])
+        # biot = trans.normal_to_beta(data_par[1], alfa=5, beta=5)
+        # self.sim.set_parameters(np.array([conductivity, biot]))
+        self.sim.set_parameters(data_par)
         
     def get_observations(self):
         res = self.sim.get_observations()

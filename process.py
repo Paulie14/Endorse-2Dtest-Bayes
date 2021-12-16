@@ -72,11 +72,12 @@ if __name__ == "__main__":
     # run sampling
     command = None
     if visualize:
-        os.error("Visualization not implemented.")
+        # os.error("Visualization not implemented.")
         # if os.path.exists("examples/visualization/" + problem_name + ".py"):
         #     command = "python3 examples/visualization/" + problem_name + ".py " + str(N)
         # else:
         #     command = "python3 examples/visualization/general_visualization.py " + str(N) + " " + problem_name
+        command = "python3 examples/visualization/general_visualization.py " + str(N) + " " + problem_path
     else:
         if oversubscribe:
             opt = " --oversubscribe "
