@@ -101,13 +101,26 @@ problem: !Coupling_Sequential
 
           # bc_type stress prepocita tenzor napeti na normalovou silu, s normalou orientovanou dovnitr
           # bc_stress * vnitřní normála = bc_traction = síla působící na těleso
+#          - region: .tunnel
+#            time: 0
+#            bc_type: stress
+#            bc_stress: !FieldFormula
+#              value: [ -45e6*(1/(<bored_time>*86400)*t), -11e6*(1/(<bored_time>*86400)*t), 0] # 1d=86400s
+#          - region: .tunnel
+#            time: <bored_time>
+#            bc_type: stress
+#            bc_stress: !FieldFormula
+#              value: [ -45e6, -11e6, 0] # 1d=86400s
+
           - region: .tunnel
             time: 0
-            bc_type: stress
-            bc_stress: !FieldFormula
-              value: [ -45e6*(1/(<bored_time>*86400)*t), -11e6*(1/(<bored_time>*86400)*t), 0] # 1d=86400s
+            bc_type: traction
+            bc_traction: !FieldFormula
+              value: [ -45e6*(1/(<bored_time>*86400)*t)*x / sqrt(x*x + (4.375/3.5)^4*y*y), -11e6*(1/(<bored_time>*86400)*t)*y / sqrt((3.5/4.375)^4*x*x + y*y), 0 ] # 1d=86400s
           - region: .tunnel
             time: <bored_time>
-            bc_type: stress
-            bc_stress: !FieldFormula
-              value: [ -45e6, -11e6, 0] # 1d=86400s
+            bc_type: traction
+            bc_traction: !FieldFormula
+              value: [ -45e6*x / sqrt(x*x + (4.375/3.5)^4*y*y), -11e6*y / sqrt((3.5/4.375)^4*x*x + y*y), 0 ] # 1d=86400s
+
+

@@ -106,27 +106,27 @@
     "save_raw_data": true,
     "save_transformed_data": true,
     "solver_parameters": {},
-    "no_solvers": 2,
+    "no_solvers": 20,
     "samplers_list": [
         {
             "type": "MH",
-            "max_samples": 4,
-            "time_limit": 600,
+            "max_samples": 10000,
+            "time_limit": 7200,
             "proposal_std": 0.5,
             "surrogate_is_updated": true
         },
         {
             "type": "DAMH",
-            "max_samples": 4,
-            "time_limit": 600,
-            "proposal_std": 0.3,
+            "max_samples": 10000,
+            "time_limit": 7200,
+            "proposal_std": 0.7,
             "surrogate_is_updated": true
         },
         {
             "type": "DAMH",
-            "max_samples": 4,
-            "time_limit": 600,
-            "proposal_std": 0.3,
+            "max_samples": 10000,
+            "time_limit": 7200,
+            "proposal_std": 1.0,
             "surrogate_is_updated": false
         }
     ],
