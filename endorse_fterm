@@ -26,7 +26,7 @@ OLD_PWD="$(pwd)"
 ABS_FLOW_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 REL_FLOW_DIR=$(realpath --relative-to=$(pwd) $ABS_FLOW_DIR)
 
-image_tag=master_1c00063e5
+image_tag=master_2815a84fd
 
 
 function print_usage() {

@@ -58,6 +58,7 @@ class endorse_2Dtest():
         print("=========================== RUNNING CALCULATION " +
               "solver {} ".format(config_dict["solver_id"]).zfill(2) +
               "sample {} ===========================".format(self.sample_counter).zfill(3))
+        print(self.sample_dir)
 
         # collect only
         if config_dict["collect_only"]:
