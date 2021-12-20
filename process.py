@@ -7,11 +7,12 @@ import flow_wrapper
 from measured_data import MeasuredData
 
 
-def just_run_flow123d():
+def just_run_flow123d(measured_data):
     wrap = flow_wrapper.Wrapper(solver_id=1)
-    wrap.set_parameters(data_par=[6e-15, 0.17])
+    wrap.set_parameters(data_par=[7.794869596611009e-15, 0.14035455365537208])
     t = time.time()
     res = wrap.get_observations()
+    md.plot_comparison(res, wrap.sim.sample_dir)
     print(res)
     print("LEN:", len(res[1]))
     print("TIME:", time.time() - t)
@@ -23,9 +24,6 @@ if __name__ == "__main__":
     # setup paths and directories
     config_dict = flow_wrapper.setup_config()
     flow_wrapper.setup_dirs(config_dict)
-
-    # JUST RUN FLOW123D FOR TESTING
-    # just_run_flow123d()
 
     # RUN THE MCMC SIMULATION
     # default parameters
@@ -56,6 +54,10 @@ if __name__ == "__main__":
 
     boreholes = ["HGT1-5", "HGT1-4", "HGT2-4", "HGT2-3"]
     times, values = md.generate_measured_samples(boreholes)
+
+    # JUST RUN FLOW123D FOR TESTING
+    just_run_flow123d(md)
+
 
     with open(problem_path) as f:
         conf = json.load(f)

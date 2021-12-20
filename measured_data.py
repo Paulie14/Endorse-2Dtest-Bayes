@@ -11,6 +11,7 @@ class MeasuredData:
         self.measured_data = {}
         self.borehole_names = []
         self.interp_data = {}
+        self.temp_color = {}
         self._config = config
 
     def initialize(self):
@@ -21,6 +22,9 @@ class MeasuredData:
             p = self.measured_data[bname]["pressure"]
             # self.interp_data[bname] = interpolate.splrep(t, p)
             self.interp_data[bname] = interpolate.CubicSpline(t, p)
+
+        self.temp_color = {'HGT1-1': 'sienna', 'HGT1-2': 'yellow', 'HGT1-3': 'orange', 'HGT1-4': 'green',
+                           'HGT1-5': 'red', 'HGT2-1': 'teal', 'HGT2-2': 'cyan', 'HGT2-3': 'blue', 'HGT2-4': 'violet'}
 
     def generate_measured_samples(self, boreholes):
         times = generate_time_axis(self._config)
@@ -77,6 +81,34 @@ class MeasuredData:
         fig.tight_layout()
         # plt.show()
         fig_file = os.path.join(self._config["work_dir"], "measured_data_TSX.pdf")
+        plt.savefig(fig_file)
+
+    def plot_comparison(self, computed_data, output_dir):
+        fig, ax1 = plt.subplots()
+        ax1.set_xlabel('time [d]')
+        ax1.set_ylabel('pressure [m]')
+        boreholes = ["HGT1-5", "HGT1-4", "HGT2-4", "HGT2-3"]
+
+        # self.plot_data_set(self.borehole_names, self.measured_data, ax1, linestyle='solid')
+        t = generate_time_axis(self._config)
+
+        idx = 0
+        for bname in boreholes:
+            p_interp = self.interp_data[bname](t)
+            p_interp = p_interp / 10
+            end_idx = idx + len(t)
+            p_comp = computed_data[1][idx:end_idx]
+            ax1.plot(t, p_interp, color=self.temp_color[bname], label=bname, linestyle='dotted')
+            ax1.plot(t, p_comp, color=self.temp_color[bname], label=bname, linestyle='solid')
+            idx = idx + len(t)
+
+        ax1.tick_params(axis='y')
+        ax1.legend(ncol=3)
+
+        fig.tight_layout()
+        # plt.show()
+
+        fig_file = os.path.join(output_dir, "observe_comparison.pdf")
         plt.savefig(fig_file)
 
     def read_csv_graph_data(self, csv_file):
@@ -148,10 +180,8 @@ class MeasuredData:
         return borehole_names, data
 
     def plot_data_set(self, bnames, data, axes, linestyle):
-        temp_color = {'HGT1-1': 'sienna', 'HGT1-2': 'yellow', 'HGT1-3': 'orange', 'HGT1-4': 'green', 'HGT1-5': 'red',
-                      'HGT2-1': 'teal', 'HGT2-2': 'cyan', 'HGT2-3': 'blue', 'HGT2-4': 'violet'}
         for bname in bnames:
-            axes.plot(data[bname]["time"], data[bname]["pressure"], color=temp_color[bname],
+            axes.plot(data[bname]["time"], data[bname]["pressure"], color=self.temp_color[bname],
                       label=bname, linestyle=linestyle)
 
 
