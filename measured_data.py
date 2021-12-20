@@ -21,7 +21,7 @@ class MeasuredData:
             t = self.measured_data[bname]["time"]
             p = self.measured_data[bname]["pressure"]
             # self.interp_data[bname] = interpolate.splrep(t, p)
-            self.interp_data[bname] = interpolate.CubicSpline(t, p)
+            self.interp_data[bname] = interpolate.CubicSpline(t, p, bc_type='natural')
 
         self.temp_color = {'HGT1-1': 'sienna', 'HGT1-2': 'yellow', 'HGT1-3': 'orange', 'HGT1-4': 'green',
                            'HGT1-5': 'red', 'HGT2-1': 'teal', 'HGT2-2': 'cyan', 'HGT2-3': 'blue', 'HGT2-4': 'violet'}
@@ -33,9 +33,6 @@ class MeasuredData:
         values = []
         for bname in boreholes:
             p = self.interp_data[bname](times)
-            # transform pressure from [kPa] to pressure head [m]
-            # 1 kPa = [/rho/g] = 0.1 m
-            p = p / 10
             values.extend(p)
         return times, values
 
@@ -95,7 +92,6 @@ class MeasuredData:
         idx = 0
         for bname in boreholes:
             p_interp = self.interp_data[bname](t)
-            p_interp = p_interp / 10
             end_idx = idx + len(t)
             p_comp = computed_data[1][idx:end_idx]
             ax1.plot(t, p_interp, color=self.temp_color[bname], label=bname, linestyle='dotted')
@@ -159,7 +155,9 @@ class MeasuredData:
             start_idx = np.searchsorted(t, excavation_start, sorter=permutation)
             t = t - excavation_start
             dat["time"] = t[permutation][start_idx:]
-            dat["pressure"] = v[permutation][start_idx:]
+            # transform pressure from [kPa] to pressure head [m]
+            # 1 kPa = [/rho/g] = 0.1 m
+            dat["pressure"] = v[permutation][start_idx:] / 10
 
         return borehole_names, data
 
@@ -176,7 +174,9 @@ class MeasuredData:
             start_idx = np.searchsorted(t, excavation_start_rq, sorter=permutation)
             t = t - excavation_start_rq
             dat["time"] = t[permutation][start_idx:]
-            dat["pressure"] = v[permutation][start_idx:]
+            # transform pressure from [kPa] to pressure head [m]
+            # 1 kPa = [/rho/g] = 0.1 m
+            dat["pressure"] = v[permutation][start_idx:] / 10
         return borehole_names, data
 
     def plot_data_set(self, bnames, data, axes, linestyle):
