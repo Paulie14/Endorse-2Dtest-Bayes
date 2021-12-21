@@ -56,7 +56,7 @@ if __name__ == "__main__":
     times, values = md.generate_measured_samples(boreholes)
 
     # JUST RUN FLOW123D FOR TESTING
-    just_run_flow123d(md)
+    # just_run_flow123d(md)
 
 
     with open(problem_path) as f:
