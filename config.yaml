@@ -98,7 +98,8 @@ hm_params:
     tunnel_dimX: *tunnel_dimX
     tunnel_dimY: *tunnel_dimY
 
-    biot_alpha: 0.17
+    biot_coefficient: 0.2 # 0.17
+    storativity: 2.8e-8 #3.28e-7 # S = rho * g * (beta_s + nu * beta_w)
     bulk_conductivity: 6e-15
     # K = k * rho * g /mu
     # permeability k=6e-22 m2

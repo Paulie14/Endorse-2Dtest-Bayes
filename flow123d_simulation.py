@@ -30,7 +30,8 @@ class endorse_2Dtest():
 
     def set_parameters(self, data_par):
         self._config["hm_params"]["bulk_conductivity"] = data_par[0]
-        self._config["hm_params"]["biot_coefficient"] = data_par[1]
+        self._config["hm_params"]["storativity"] = data_par[1]
+        # self._config["hm_params"]["biot_coefficient"] = data_par[1]
 
     def get_observations(self):
         try:

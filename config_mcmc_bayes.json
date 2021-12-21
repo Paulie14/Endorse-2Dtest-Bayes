@@ -12,10 +12,10 @@
             }
         ],
         [
-            "normal_to_beta",
+            "normal_to_lognormal",
             {
-                "alfa": 5,
-                "beta": 5
+                "mu": -17.4,
+                "sigma": 2
             }
         ]
     ],

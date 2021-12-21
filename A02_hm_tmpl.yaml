@@ -29,7 +29,7 @@ problem: !Coupling_Sequential
           - region: BULK
             conductivity: <bulk_conductivity>
             # https://en.wikipedia.org/wiki/Specific_storage
-            storativity: 2.8e-8 #3.28e-7 # S = rho * g * (beta_s + nu * beta_w)
+            storativity: <storativity> #2.8e-8 #3.28e-7 # S = rho * g * (beta_s + nu * beta_w)
             # bulk compressibility beta_s=1/K = (3(1-2pr)/E)
             # porosity nu=0.007
             # water compressibility beta_w=0 1/Pa
