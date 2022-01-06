@@ -92,8 +92,8 @@ problem: !Coupling_Sequential
           options: <mechanics_solver__options>
         input_fields:
           - region: BULK
-            young_modulus: 60e9
-            poisson_ratio: 0.2
+            young_modulus: <young_modulus>
+            poisson_ratio: <poisson_ratio>
 
           - region: .outer_boundary
             bc_type: displacement
@@ -105,11 +105,11 @@ problem: !Coupling_Sequential
             time: 0
             bc_type: stress
             bc_stress: !FieldFormula
-              value: [ -45e6*(1/(<bored_time>*86400)*t), -11e6*(1/(<bored_time>*86400)*t), 0] # 1d=86400s
+              value: [ -<init_stress_x>*(1/(<bored_time>*86400)*t), -11e6*(1/(<bored_time>*86400)*t), 0] # 1d=86400s
           - region: .tunnel
             time: <bored_time>
             bc_type: stress
-            bc_stress: [ -45e6, -11e6, 0] # 1d=86400s
+            bc_stress: [ -<init_stress_x>, -11e6, 0] # 1d=86400s
 
 #          - region: .tunnel
 #            time: 0

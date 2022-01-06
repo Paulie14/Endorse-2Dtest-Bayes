@@ -82,6 +82,15 @@ geometry:
 # base of the mesh file name
 mesh_name: tunnel_mesh
 
+# KEEP THE ORDER SAME AS IN MCMC CONFIG!
+mcmc_parameters:
+  - bulk_conductivity
+  - storativity
+#  - biot_coefficient
+#  - young_modulus
+#  - poisson_ratio
+#  - init_stress_x
+
 # parameters substituted into the HM model template
 hm_params:
     mesh: tunnel_mesh.msh # healed mesh is used at the end (programmatically replaced)
@@ -98,13 +107,15 @@ hm_params:
     tunnel_dimX: *tunnel_dimX
     tunnel_dimY: *tunnel_dimY
 
-    biot_coefficient: 0.2 # 0.17
-    storativity: 2.8e-8 #3.28e-7 # S = rho * g * (beta_s + nu * beta_w)
-    bulk_conductivity: 6e-15
-    # K = k * rho * g /mu
-    # permeability k=6e-22 m2
-    # dynamic viscosity mu=0.001 Pa.s
+# physical parameters of main interest:
+    biot_coefficient: 0.2     # 0.17
+    storativity: 2.8e-8       #3.28e-7 # S = rho * g * (beta_s + nu * beta_w)
+    bulk_conductivity: 6e-15  # K = k * rho * g /mu, permeability k=6e-22 m2, dyn. viscosity mu=0.001 Pa.s
+    young_modulus: 60e9
+    poisson_ratio: 0.2
+    init_stress_x: 45e6
 
+# solver's settings
     mechanics_solver__a_tol: 0
     mechanics_solver__r_tol: 1e-12
     mechanics_solver__options: -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg #-ksp_monitor
