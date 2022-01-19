@@ -1,3 +1,6 @@
 [submodule "bgem"]
 	path = bgem
 	url = git@github.com:GeoMop/bgem.git
+[submodule "surrDAMH"]
+	path = surrDAMH
+	url = git@github.com:dom0015/surrDAMH.git
