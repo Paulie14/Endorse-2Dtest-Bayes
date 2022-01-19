@@ -15,6 +15,6 @@ activate virtual environment
 > source venv/bin/activate
 
 run the process:
-> python3 process.py /home/paulie/Workspace/Endorse-2Dtest-Bayes//config_mcmc_bayes.json 2
+> python3 process.py /home/paulie/Workspace/Endorse-2Dtest-Bayes//config_mcmc_bayes.json 2 oversubscribe
 > python3 process.py /auto/liberec3-tul/home/pavel_exner/workspace/Endorse-2Dtest-Bayes/config_mcmc_bayes.json 2
 

@@ -98,7 +98,7 @@ if __name__ == "__main__":
             command = mpirun + sampler + ":" + solver
 
     rep_dir = config_dict["script_dir"]
-    os.chdir(os.path.join(rep_dir, "MCMC-Bayes-python"))
+    os.chdir(os.path.join(rep_dir, "surrDAMH"))
     print(command)
     # exit(0)
     os.system(command)
