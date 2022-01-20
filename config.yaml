@@ -47,6 +47,13 @@ local:
   gmsh_executable:
     - /home/paulie/Workspace/Endorse-2Dtest-Bayes/venv/bin/gmsh
 
+metacentrum:
+  ncpus: 3
+  walltime: 02:00:00
+  queue: charon_2h
+  name: TSX_bayes
+  workspace_rel: ../../workspace
+
 #metacentrum:
 #  flow_executable:
 #  # release
@@ -68,6 +75,13 @@ output_times: &output_times
   - {begin: *start_time, step: 10, end: 18}
   - {begin: 18, step: 10, end: 100}
   - {begin: 100, step: 20, end: *end_time}
+
+# SHORT TESTING time axis
+#start_time: &start_time 0
+#end_time: &end_time 30
+#output_times: &output_times
+#  - {begin: *start_time, step: 10, end: 18}
+#  - {begin: 18, step: 5, end: *end_time}
 
 geometry:
   # depth of the center of the box and of the coordinate system

@@ -85,20 +85,57 @@ if __name__ == "__main__":
             opt = " --oversubscribe "
         else:
             opt = " "
-        sampler = " -n " + str(N) + opt + "python3 -m mpi4py surrDAMH/process_SAMPLER.py "
-        solver = " -n 1" + opt + "python3 -m mpi4py surrDAMH/process_SOLVER.py " + problem_path + " "
-        collector = " -n 1" + opt + "python3 -m mpi4py surrDAMH/process_COLLECTOR.py "
+        sampler = "python3 -m mpi4py surrDAMH/process_SAMPLER.py "
+        solver = "python3 -m mpi4py surrDAMH/process_SOLVER.py " + problem_path + " "
+        collector = "python3 -m mpi4py surrDAMH/process_COLLECTOR.py "
 
         # possibly change to particular mpirun for testing
         # mpirun = "/usr/local/mpich_3.4.2/bin/mpirun"
         mpirun = "mpirun"
         if "surrogate_type" in conf.keys():
-            command = mpirun + sampler + ":" + solver + ":" + collector
+            command = mpirun + " -n " + str(N) + opt + sampler + ":" + " -n 1" + opt + solver + ":" + " -n 1" + opt + collector
         else:
-            command = mpirun + sampler + ":" + solver
+            command = mpirun + " -n " + str(N) + opt + sampler + ":" + " -n 1" + opt + solver
 
-    rep_dir = config_dict["script_dir"]
-    os.chdir(os.path.join(rep_dir, "surrDAMH"))
-    print(command)
-    # exit(0)
-    os.system(command)
+        if "metacentrum" in config_dict.keys():
+            met = config_dict["metacentrum"]
+            ncpus = met["ncpus"]
+
+            # bash -c "source ./venv/bin/activate && "
+            lines = [
+                '#!/bin/bash',
+                '#PBS -S /bin/bash',
+                '#PBS -l select=1:ncpus=' + str(ncpus+2) + ':mem=12gb',
+                '#PBS -l walltime=' + met["walltime"],
+                '#PBS -q ' + met["queue"],
+                '#PBS -N ' + met["name"],
+                '#PBS -j oe',
+                '\n',
+                'cd "' + config_dict["script_dir"] + '"',
+                'image=$(./endorse_fterm image)',
+                'sing_command="singularity exec -B ' + met["workspace_rel"] + '/:/' + met["workspace_rel"]
+                        + ' docker://$image"',
+                '\n',
+                'sampler="' + sampler + '"',
+                'solver="' + solver + '"',
+                'collector="' + collector + '"',
+                '\n',
+                'bash_venv() {bash - c "source ./venv/bin/activate && ${1}"}',
+                'command="mpirun '
+                        + '-n ' + str(ncpus) + ' $sing_command bash_env($sampler) : '
+                        + '-n 1 $sing_command bash_env($solver) : '
+                        + '-n 1 $sing_command bash_env($collector)"',
+                'echo $command',
+                'eval $command'
+            ]
+            with open("shell_process.sh", 'w') as f:
+                f.write('\n'.join(lines))
+
+    if "metacentrum" in config_dict.keys():
+        os.system("qsub " + os.path.join(config_dict["work_dir"], "shell_process.sh"))
+    else:
+        rep_dir = config_dict["script_dir"]
+        os.chdir(os.path.join(rep_dir, "surrDAMH"))
+        print(command)
+        # exit(0)
+        os.system(command)
