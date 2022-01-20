@@ -17,6 +17,21 @@ import matplotlib.pyplot as plt
 import aux_functions
 
 
+def generate_time_axis(config_dict):
+    end_time = float(config_dict["end_time"])
+    output_times = config_dict["output_times"]
+
+    # create time axis
+    times = []
+    for dt in output_times:
+        b = float(dt["begin"])
+        s = float(dt["step"])
+        e = float(dt["end"])
+        times.extend(np.arange(b, e, s))
+    times.append(end_time)
+    return times
+
+
 class endorse_2Dtest():
 
     def __init__(self, config, clean):
@@ -117,7 +132,7 @@ class endorse_2Dtest():
         output_dir = config_dict["hm_params"]["output_dir"]
 
         # the times defined in input
-        times = np.array(aux_functions.generate_time_axis(config_dict))
+        times = np.array(generate_time_axis(config_dict))
         with open(os.path.join(output_dir, "flow_observe.yaml"), "r") as f:
             loaded_yaml = yaml.load(f, yaml.CSafeLoader)
             points = loaded_yaml['points']

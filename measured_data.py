@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.fft as fft
 from scipy import interpolate
-from aux_functions import generate_time_axis
+from flow123d_simulation import generate_time_axis
+
 
 class MeasuredData:
     def __init__(self, config):

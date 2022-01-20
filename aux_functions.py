@@ -1,6 +1,6 @@
 import os
-import numpy as np
 import shutil
+
 
 def force_mkdir(path, force=False):
     """
@@ -83,18 +83,3 @@ def check_gmsh_log(lines):
     res = [line for line in lines if empty_volume_error in line]
     if len(res) != 0:
         raise Exception("GMSH error - No elements in volume")
-
-
-def generate_time_axis(config_dict):
-    end_time = float(config_dict["end_time"])
-    output_times = config_dict["output_times"]
-
-    # create time axis
-    times = []
-    for dt in output_times:
-        b = float(dt["begin"])
-        s = float(dt["step"])
-        e = float(dt["end"])
-        times.extend(np.arange(b, e, s))
-    times.append(end_time)
-    return times
