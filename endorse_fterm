@@ -26,10 +26,11 @@ OLD_PWD="$(pwd)"
 ABS_FLOW_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 REL_FLOW_DIR=$(realpath --relative-to=$(pwd) $ABS_FLOW_DIR)
 
-image_tag=master_2815a84fd
+image_name=geomop
+image_tag=master_8c1b58980
 
 function get_base_image() {
-    local image=flow123d/ci-gnu:$image_tag
+    local image=flow123d/$image_name:$image_tag
     echo $image
 }
 
@@ -266,13 +267,13 @@ done
 # set flow123d_images if empty
 if [ -z "$flow123d_images" ]
 then
-flow123d_images="ci-gnu"
+flow123d_images=$image_name
 fi
 
 
 # determine image names
 # base_image=flow123d/flow-dev-$image_env-$image_kind:$image_tag
-base_image=flow123d/ci-gnu:$image_tag
+base_image=flow123d/$image_name:$image_tag
 
 
 dbg "base_image     = $base_image"
