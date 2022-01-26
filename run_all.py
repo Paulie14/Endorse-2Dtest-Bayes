@@ -91,7 +91,8 @@ if __name__ == "__main__":
         else:
             met = config_dict["metacentrum"]
             common_lines = [
-                '# run from the repository directory',
+                'set -x',
+                '\n# run from the repository directory',
                 'cd "' + config_dict["script_dir"] + '"',
                 '\n# command for running correct docker image',
                 'image=$(./endorse_fterm image)',
@@ -115,7 +116,7 @@ if __name__ == "__main__":
             lines = [
                 '#!/bin/bash',
                 '#PBS -S /bin/bash',
-                '#PBS -l select=1:ncpus=' + str(N+2) + ':mem=12gb',
+                '#PBS -l select=1:ncpus=' + str(N+2) + ':mem=' + met["memory"],
                 '#PBS -l walltime=' + met["walltime"],
                 '#PBS -q ' + met["queue"],
                 '#PBS -N ' + met["name"],
@@ -131,11 +132,16 @@ if __name__ == "__main__":
                 'module load mpich-3.0.2-gcc',
                 'which mpirun',
                 'mpirun --version',
+                '\n# get hostfile and pass into container mpiexec',
+                'local_host_file="hostfile_$PBS_JOBID"',
+                'cp $PBS_NODEFILE $local_host_file',
                 '\n# finally gather the full command',
-                'command="mpirun '
-                        + '-n ' + str(N) + ' $sing_command $sampler : '
-                        + '-n 1 $sing_command $solver : '
-                        + '-n 1 $sing_command $collector"',
+                'command="$sing_command mpiexec '
+                        + '-f $local_host_file '
+                        + '-launcher-exec \'$sing_command mpiexec\' '
+                        + '-n ' + str(N) + ' $sampler : '
+                        + '-n 1 $solver : '
+                        + '-n 1 $collector"',
                 '\n', 'echo $command', 'eval $command'
             ]
             with open("shell_process.sh", 'w') as f:

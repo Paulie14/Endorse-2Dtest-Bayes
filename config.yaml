@@ -48,8 +48,8 @@ local:
     - /home/paulie/Workspace/Endorse-2Dtest-Bayes/venv/bin/gmsh
 
 metacentrum:
-  ncpus: 3
   walltime: 02:00:00
+  memory: 12gb
   queue: charon_2h
   name: TSX_bayes
   workspace_rel: ../../workspace
