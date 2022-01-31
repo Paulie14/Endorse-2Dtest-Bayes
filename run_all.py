@@ -137,6 +137,7 @@ if __name__ == "__main__":
                 'command="$sing_command mpiexec '
                         + '-f $local_host_file '
                         + '-launcher-exec \'$sing_command mpiexec\' '
+                        # + '-envnone '
                         + '-n ' + str(N) + ' $sampler : '
                         + '-n 1 $solver : '
                         + '-n 1 $collector"',

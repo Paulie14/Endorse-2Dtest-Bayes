@@ -1,5 +1,7 @@
 import os
 import subprocess
+import time
+
 import numpy as np
 import itertools
 import collections
@@ -180,6 +182,13 @@ class endorse_2Dtest():
                 fname + '.yaml',
                 params)
             # arguments.extend(['--output_dir', output_dir, fname + ".yaml"])
+            # print("Running: ", " ".join(arguments))
+            # with open(fname + "_stdout", "w") as stdout:
+            #     with open(fname + "_stderr", "w") as stderr:
+            #         completed = subprocess.run(arguments, stdout=stdout, stderr=stderr)
+            # print("Exit status: ", completed.returncode)
+            # status = completed.returncode == 0
+
             if not config_dict["run_on_metacentrum"]:
                 arguments.extend(['--output_dir', output_dir, fname + ".yaml"])
                 print("Running: ", " ".join(arguments))
@@ -200,7 +209,8 @@ class endorse_2Dtest():
                 lines = [
                     '#!/bin/bash',
                     'cd ' + self.sample_dir,
-                    " ".join(arguments) + " 2> stderr.log" + " 1> stdout.log"
+                    " ".join(arguments) + " 2> stderr.log" + " 1> stdout.log",
+                    'echo "flow123d FINISHED" > FINISHED'
                 ]
                 run_script = "flow123d.sh"
                 run_script = os.path.abspath(run_script)
@@ -208,8 +218,16 @@ class endorse_2Dtest():
                     f.write('\n'.join(lines))
                 sub_comm = MPI.COMM_SELF.Spawn('bash', args=[run_script], maxprocs=1)
                 # sub_comm.Barrier()
-                # sub_comm.Disconnect()
-                status = True
+                sub_comm.Disconnect()
+                status = False
+                max_time = config_dict["max_time_per_sample"]
+                step = min(2.5, max_time)
+                cumul_time = 0
+                while cumul_time < max_time:
+                    time.sleep(step)
+                    cumul_time = cumul_time + step
+                    if os.path.isfile(os.path.join(self.sample_dir, "FINISHED")):
+                        status = True
 
         conv_check = aux_functions.check_conv_reasons(os.path.join(output_dir, "flow123.0.log"))
         print("converged: ", conv_check)
