@@ -4,14 +4,16 @@ import shutil
 import ruamel.yaml as yaml
 
 import aux_functions
+from preprocess import preprocess
+
 
 # this script is supposed to be dependent only on python packages present on any machine
 # all other python scripts are later run inside docker container
 
-def setup():
+def setup(output_dir):
     # create and cd workdir
     rep_dir = os.path.dirname(os.path.abspath(__file__))
-    work_dir = os.path.join(rep_dir, "flow123d_sim")
+    work_dir = os.path.abspath(output_dir)
 
     # Create working directory if necessary
     os.makedirs(work_dir, mode=0o775, exist_ok=True)
@@ -40,24 +42,28 @@ def setup():
 
 if __name__ == "__main__":
 
-    # setup paths and directories
-    config_dict = setup()
-
     # default parameters
     N = 2  # default number of sampling processes
     oversubscribe = False  # if there are not enough slots available
     visualize = False  # True = only visualization
     problem_path = None
+    output_dir = "flow123d_sim"
 
+    # read parameters
     len_argv = len(sys.argv)
     assert len_argv > 1, "Specify configuration json file!"
     if len_argv > 1:
         problem_path = sys.argv[1]
     if len_argv > 2:
-        N = int(sys.argv[2])  # number of MH/DAMH chains
+        output_dir = sys.argv[2]
     if len_argv > 3:
-        oversubscribe = sys.argv[3] == "oversubscribe"
-        visualize = sys.argv[3] == "visualize"
+        N = int(sys.argv[3])  # number of MH/DAMH chains
+    if len_argv > 4:
+        oversubscribe = sys.argv[4] == "oversubscribe"
+        visualize = sys.argv[4] == "visualize"
+
+    # setup paths and directories
+    config_dict = setup(output_dir)
 
     # run sampling
     # paths are relative to repository dir
@@ -92,6 +98,8 @@ if __name__ == "__main__":
             met = config_dict["metacentrum"]
             common_lines = [
                 'set -x',
+                '\n# absolute path to output_dir',
+                'output_dir="' + output_dir + '"',
                 '\n# run from the repository directory',
                 'cd "' + config_dict["script_dir"] + '"',
                 '\n# command for running correct docker image',
@@ -101,16 +109,6 @@ if __name__ == "__main__":
                 '\n# auxiliary command for opening Python environment inside docker image',
                 'bash_py="bash -c \'source ./venv/bin/activate &&"',
             ]
-
-            # prepare preprocess script
-            lines = [
-                '#!/bin/bash\n',
-                *common_lines, '\n',
-                'command="$sing_command $bash_py ' + 'python3 preprocess.py ' + problem_path + '\'"',
-                '\n', 'echo $command', 'eval $command'
-            ]
-            with open("shell_preprocess.sh", 'w') as f:
-                f.write('\n'.join(lines))
 
             # prepare PBS script
             lines = [
@@ -133,7 +131,7 @@ if __name__ == "__main__":
                 'which mpirun',
                 'mpirun --version',
                 '\n# get hostfile and pass into container mpiexec',
-                'local_host_file="hostfile_$PBS_JOBID"',
+                'local_host_file="$output_dir/hostfile_$PBS_JOBID"',
                 'cp $PBS_NODEFILE $local_host_file',
                 '\n# finally gather the full command',
                 'command="$sing_command mpiexec '
@@ -144,17 +142,17 @@ if __name__ == "__main__":
                         + '-n 1 $collector"',
                 '\n', 'echo $command', 'eval $command'
             ]
-            with open("shell_process.sh", 'w') as f:
+            with open("pbs_job.sh", 'w') as f:
                 f.write('\n'.join(lines))
 
+            # these are called from actual simulation directory
+            # PBS script
+            # os.system("qsub " + os.path.join(config_dict["work_dir"], "shell_process.sh"))
+
+    preprocess(config_dict, problem_path)
+
     # final command call
-    if config_dict["run_on_metacentrum"]:
-        # these are called from actual simulation directory
-        # preprocess
-        os.system(os.path.join(config_dict["work_dir"], "shell_preprocess.sh"))
-        # PBS script
-        os.system("qsub " + os.path.join(config_dict["work_dir"], "shell_process.sh"))
-    else:
+    if not config_dict["run_on_metacentrum"]:
         # preprocess
         from preprocess import preprocess
         preprocess(config_dict, problem_path)

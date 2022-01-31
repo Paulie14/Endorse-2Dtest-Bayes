@@ -176,16 +176,41 @@ class endorse_2Dtest():
         else:
             aux_functions.substitute_placeholders(
                 os.path.join(config_dict["common_files_dir"],
-                fname + '_tmpl.yaml'),
+                             fname + '_tmpl.yaml'),
                 fname + '.yaml',
                 params)
-            arguments.extend(['--output_dir', output_dir, fname + ".yaml"])
-            print("Running: ", " ".join(arguments))
-            with open(fname + "_stdout", "w") as stdout:
-                with open(fname + "_stderr", "w") as stderr:
-                    completed = subprocess.run(arguments, stdout=stdout, stderr=stderr)
-            print("Exit status: ", completed.returncode)
-            status = completed.returncode == 0
+            # arguments.extend(['--output_dir', output_dir, fname + ".yaml"])
+            if not config_dict["run_on_metacentrum"]:
+                arguments.extend(['--output_dir', output_dir, fname + ".yaml"])
+                print("Running: ", " ".join(arguments))
+                with open(fname + "_stdout", "w") as stdout:
+                    with open(fname + "_stderr", "w") as stderr:
+                        completed = subprocess.run(arguments, stdout=stdout, stderr=stderr)
+                print("Exit status: ", completed.returncode)
+                status = completed.returncode == 0
+            else:
+                from mpi4py import MPI
+
+                # arguments.extend(['--output_dir', os.path.abspath(output_dir), os.path.abspath(fname + ".yaml")])
+                # print("Running: ", " ".join(arguments))
+                # sub_comm = MPI.COMM_SELF.Spawn('flow123d', args=arguments[1:], maxprocs=1)
+
+                # wrap inside bash script to simulate redirection of stderr and stdout from spawned process
+                arguments.extend(['--output_dir', output_dir, fname + ".yaml"])
+                lines = [
+                    '#!/bin/bash',
+                    'cd ' + self.sample_dir,
+                    " ".join(arguments) + " 2> stderr.log" + " 1> stdout.log"
+                ]
+                run_script = "flow123d.sh"
+                run_script = os.path.abspath(run_script)
+                with open(run_script, 'w') as f:
+                    f.write('\n'.join(lines))
+                sub_comm = MPI.COMM_SELF.Spawn('bash', args=[run_script], maxprocs=1)
+                # sub_comm.Barrier()
+                # sub_comm.Disconnect()
+                status = True
+
         conv_check = aux_functions.check_conv_reasons(os.path.join(output_dir, "flow123.0.log"))
         print("converged: ", conv_check)
         return status and (conv_check >= 0)
