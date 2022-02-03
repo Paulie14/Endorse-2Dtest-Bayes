@@ -3,7 +3,9 @@
 
 # true -> work with pbs on metacentrum
 # false -> run locally, no pbs
-#run_on_metacentrum: False
+# if run by run_all*, it is set automatically
+run_on_metacentrum: False
+max_time_per_sample: 100
 
 # number of samples
 #n_samples: 1

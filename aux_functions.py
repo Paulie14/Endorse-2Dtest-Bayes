@@ -53,7 +53,7 @@ def check_conv_reasons(log_fname):
             except ValueError:
                 continue
             # check HM iterations:
-            if "HM solver did not converge" in line:
+            if "Nonlinear solver did not converge." in line:
                 print("HM solver did not converge.")
                 return -100
     return 0

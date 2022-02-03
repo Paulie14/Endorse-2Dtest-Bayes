@@ -146,19 +146,14 @@ if __name__ == "__main__":
             with open("pbs_job.sh", 'w') as f:
                 f.write('\n'.join(lines))
 
-            # these are called from actual simulation directory
-            # PBS script
-            # os.system("qsub " + os.path.join(config_dict["work_dir"], "shell_process.sh"))
-
     preprocess(config_dict, problem_path)
 
     # final command call
     if not config_dict["run_on_metacentrum"]:
-        # preprocess
-        from preprocess import preprocess
-        preprocess(config_dict, problem_path)
-
         # local command call
         os.chdir(config_dict["script_dir"])
         print(command)
         os.system(command)
+    else:
+        # PBS script
+        os.system("qsub " + os.path.join(config_dict["work_dir"], "pbs_job.sh"))

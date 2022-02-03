@@ -2,6 +2,9 @@
 
 set -x
 
+# set running on metacentrum to True
+sed -i '/run_on_metacentrum:/c\run_on_metacentrum: True' config.yaml
+
 # output directory for the whole simulation
 output_dir="flow123d_sim"
 rep_dir=$(pwd)
@@ -20,6 +23,3 @@ mcmc_config=$(realpath config_mcmc_bayes.json)
 command="$sing_command $bash_py python3 -m mpi4py run_all.py $mcmc_config $output_dir 4'"
 echo $command
 eval $command
-
-# enqueue PBS task
-qsub "$output_dir/pbs_job.sh"
