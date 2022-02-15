@@ -75,13 +75,19 @@ if __name__ == "__main__":
         #     command = "python3 examples/visualization/" + problem_name + ".py " + str(N)
         # else:
         #     command = "python3 examples/visualization/general_visualization.py " + str(N) + " " + problem_name
-        command = "python3 examples/visualization/general_visualization.py " + str(N) + " " + problem_path
+        args = [str(N), problem_path, output_dir]
+        command = "python3 surrDAMH/examples/visualization/general_visualization.py " + " ".join(args)
+        # local command call
+        os.chdir(config_dict["script_dir"])
+        print(command)
+        os.system(command)
+        exit(0)
     else:
         if oversubscribe:
             opt = " --oversubscribe "
         else:
             opt = " "
-        sampler = "python3 -m mpi4py surrDAMH/surrDAMH/process_SAMPLER.py "
+        sampler = "python3 -m mpi4py surrDAMH/surrDAMH/process_SAMPLER.py " + output_dir + " "
         solver = "python3 -m mpi4py surrDAMH/surrDAMH/process_SOLVER.py " + problem_path + " "
         collector = "python3 -m mpi4py surrDAMH/surrDAMH/process_COLLECTOR.py "
 
@@ -145,6 +151,7 @@ if __name__ == "__main__":
             ]
             with open("pbs_job.sh", 'w') as f:
                 f.write('\n'.join(lines))
+
 
     preprocess(config_dict, problem_path)
 
