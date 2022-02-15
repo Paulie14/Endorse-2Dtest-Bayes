@@ -55,10 +55,12 @@ class endorse_2Dtest():
 
     def get_observations(self):
         try:
+            print("get observations from flow_wrapper")
             res = self.calculate(self._config)
             return res
         except ValueError:
-            return [-1000, []]
+            print("flow_wrapper failed for unknown reason.")
+            return -1000, []
 
     def calculate(self, config_dict):
         """
@@ -104,6 +106,7 @@ class endorse_2Dtest():
         if not hm_succeed:
             # raise Exception("HM model failed.")
             # "Flow123d failed (wrong input or solver diverged)"
+            print("Flow123d failed.")
             return -1, []  # tag, value_list
         print("Running Flow123d - HM...finished")
 
@@ -112,8 +115,18 @@ class endorse_2Dtest():
 
         print("Finished computation")
 
-        collected_values = self.collect_results(config_dict)
-        return 1, collected_values  # tag, value_list
+        # collected_values = self.collect_results(config_dict)
+        # print("Sample results collected.")
+        # return 1, collected_values  # tag, value_list
+
+        try:
+            collected_values = self.collect_results(config_dict)
+            print("Sample results collected.")
+            return 1, collected_values  # tag, value_list
+        except:
+            print("Collecting sample results failed.")
+            return -2, []
+
 
     # def check_data(self, data, minimum, maximum):
     #     n_times = len(endorse_2Dtest.result_format()[0].times)

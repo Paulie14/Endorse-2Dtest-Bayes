@@ -39,7 +39,13 @@ def substitute_placeholders(file_in, file_out, params):
 
 def check_conv_reasons(log_fname):
     with open(log_fname, "r") as f:
+        # print(log_fname)
         for line in f:
+            # check HM iterations:
+            if "Nonlinear solver did not converge." in line:
+                print(line)
+                return -100
+
             # check linear solvers conv. reason:
             tokens = line.split(" ")
             try:
@@ -52,10 +58,6 @@ def check_conv_reasons(log_fname):
                         return conv_reason
             except ValueError:
                 continue
-            # check HM iterations:
-            if "Nonlinear solver did not converge." in line:
-                print("HM solver did not converge.")
-                return -100
     return 0
 
 
