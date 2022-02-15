@@ -181,74 +181,108 @@ class endorse_2Dtest():
         :return:
         """
 
+        status = False
         params = config_dict[param_key]
         fname = params["in_file"]
         arguments = config_dict["_aux_flow_path"].copy()
         output_dir = "output_" + fname
         config_dict[param_key]["output_dir"] = output_dir
-        if all([os.path.isfile(os.path.join(output_dir, f)) for f in result_files]):
-            status = True
-        else:
+
+        if not all([os.path.isfile(os.path.join(output_dir, f)) for f in result_files]):
             aux_functions.substitute_placeholders(
                 os.path.join(config_dict["common_files_dir"],
                              fname + '_tmpl.yaml'),
                 fname + '.yaml',
                 params)
+
+            arguments.extend(['--output_dir', output_dir, fname + ".yaml"])
+            print("Running: ", " ".join(arguments))
+            with open(fname + "_stdout", "w") as stdout:
+                with open(fname + "_stderr", "w") as stderr:
+                    completed = subprocess.run(arguments, stdout=stdout, stderr=stderr)
+            print("Exit status: ", completed.returncode)
+            status = completed.returncode == 0
+
+        if status:
+            log_file = os.path.join(self.sample_dir, output_dir, "flow123.0.log")
+            conv_check = aux_functions.check_conv_reasons(log_file)
+            print("converged: ", conv_check)
+            status = conv_check >= 0
+
+        return status
+
+            # if not config_dict["run_on_metacentrum"]:
+            #     arguments.extend(['--output_dir', output_dir, fname + ".yaml"])
+            #     print("Running: ", " ".join(arguments))
+            #     with open(fname + "_stdout", "w") as stdout:
+            #         with open(fname + "_stderr", "w") as stderr:
+            #             completed = subprocess.run(arguments, stdout=stdout, stderr=stderr)
+            #     print("Exit status: ", completed.returncode)
+            #     status = completed.returncode == 0
+            # else:
+
+
+            # from mpi4py import MPI
+            # # arguments.extend(['--output_dir', os.path.abspath(output_dir), os.path.abspath(fname + ".yaml")])
+            # # print("Running: ", " ".join(arguments))
+            # # sub_comm = MPI.COMM_SELF.Spawn('flow123d', args=arguments[1:], maxprocs=1)
+            #
+            # # wrap inside bash script to simulate redirection of stderr and stdout from spawned process
             # arguments.extend(['--output_dir', output_dir, fname + ".yaml"])
-            # print("Running: ", " ".join(arguments))
-            # with open(fname + "_stdout", "w") as stdout:
-            #     with open(fname + "_stderr", "w") as stderr:
-            #         completed = subprocess.run(arguments, stdout=stdout, stderr=stderr)
-            # print("Exit status: ", completed.returncode)
-            # status = completed.returncode == 0
+            # finished_file = "FINISHED"
+            # lines = [
+            #     '#!/bin/bash',
+            #     'cd ' + self.sample_dir,
+            #     'touch ' + finished_file,
+            #     'extime=\"$(time (' + " ".join(arguments) + " 2> stderr.log" + " 1> stdout.log" + ") 2>&1 1>/dev/null )\"",
+            #     'printf "$extime" >> ' + finished_file
+            #     # " ".join(arguments),
+            #     # 'printf "finished" >> ' + finished_file
+            # ]
+            # run_script = "flow123d.sh"
+            # run_script = os.path.abspath(run_script)
+            # with open(run_script, 'w') as f:
+            #     f.write('\n'.join(lines))
+            # sub_comm = MPI.COMM_SELF.Spawn('bash', args=[run_script], maxprocs=1)
+            # # sub_comm.Barrier()
+            # sub_comm.Disconnect()
+            # status = False
+            # max_time = config_dict["max_time_per_sample"]
+            # step = min(2, max_time)
+            # cumul_time = 0
+            # finished_file = os.path.join(self.sample_dir, finished_file)
+            # log_file = os.path.join(self.sample_dir, output_dir, "flow123.0.log")
+            # print(finished_file)
+            # print(log_file)
+            #
+            # while cumul_time < max_time:
+            #     time.sleep(step)
+            #     cumul_time = cumul_time + step
+            #     print("cumul_time:", cumul_time, "log size:", os.stat(log_file).st_size)
+            #     print("finished size:", os.stat(finished_file).st_size)
+            #     # this works:
+            #     if os.path.isfile(finished_file) and os.stat(finished_file).st_size != 0:
+            #     # this does not:
+            #     # if  os.stat(finished_file).st_size != 0:
+            #             time.sleep(step)
+            #             status = True
+            #             break
+            #
+            #     # if os.path.isfile(log_file):
+            #     #     with open(log_file, 'r') as f:
+            #     #         for line in f:
+            #     #             pass
+            #     #         print(line)
+            #     #         status = line == "  - O.K."
+            #     #     time.sleep(step)
+            #         # status = True
 
-            if not config_dict["run_on_metacentrum"]:
-                arguments.extend(['--output_dir', output_dir, fname + ".yaml"])
-                print("Running: ", " ".join(arguments))
-                with open(fname + "_stdout", "w") as stdout:
-                    with open(fname + "_stderr", "w") as stderr:
-                        completed = subprocess.run(arguments, stdout=stdout, stderr=stderr)
-                print("Exit status: ", completed.returncode)
-                status = completed.returncode == 0
-            else:
-                from mpi4py import MPI
-
-                # arguments.extend(['--output_dir', os.path.abspath(output_dir), os.path.abspath(fname + ".yaml")])
-                # print("Running: ", " ".join(arguments))
-                # sub_comm = MPI.COMM_SELF.Spawn('flow123d', args=arguments[1:], maxprocs=1)
-
-                # wrap inside bash script to simulate redirection of stderr and stdout from spawned process
-                arguments.extend(['--output_dir', output_dir, fname + ".yaml"])
-                lines = [
-                    '#!/bin/bash',
-                    'cd ' + self.sample_dir,
-                    " ".join(arguments) + " 2> stderr.log" + " 1> stdout.log",
-                    'echo "flow123d FINISHED" > FINISHED'
-                ]
-                run_script = "flow123d.sh"
-                run_script = os.path.abspath(run_script)
-                with open(run_script, 'w') as f:
-                    f.write('\n'.join(lines))
-                sub_comm = MPI.COMM_SELF.Spawn('bash', args=[run_script], maxprocs=1)
-                # sub_comm.Barrier()
-                sub_comm.Disconnect()
-                status = False
-                max_time = config_dict["max_time_per_sample"]
-                step = min(2.5, max_time)
-                cumul_time = 0
-                while cumul_time < max_time:
-                    time.sleep(step)
-                    cumul_time = cumul_time + step
-                    if os.path.isfile(os.path.join(self.sample_dir, "FINISHED")):
-                        status = True
-
-        conv_check = aux_functions.check_conv_reasons(os.path.join(output_dir, "flow123.0.log"))
-        print("converged: ", conv_check)
-        return status and (conv_check >= 0)
-
-
-
-
+            # if status:
+            # conv_check = aux_functions.check_conv_reasons(log_file)
+            # print("converged: ", conv_check)
+            # status = conv_check >= 0
+            #
+            # return status
 
 
 
