@@ -90,8 +90,8 @@ if __name__ == "__main__":
         if not config_dict["run_on_metacentrum"]:
             # possibly change to particular mpirun for testing
             # mpirun = "/usr/local/mpich_3.4.2/bin/mpirun"
-            # mpirun = "mpirun"
-            mpirun = "mpiexec"
+            mpirun = "mpirun"
+            # mpirun = "mpiexec -envnone"
             command = mpirun + " -n " + str(N) + opt + sampler \
                       + ":" + " -n 1" + opt + solver + ":" + " -n 1" + opt + collector
         else:
@@ -137,7 +137,7 @@ if __name__ == "__main__":
                 'command="$sing_command mpiexec '
                         + '-f $local_host_file '
                         + '-launcher-exec \'$sing_command mpiexec\' '
-                        # + '-envnone '
+                        + '-envnone '
                         + '-n ' + str(N) + ' $sampler : '
                         + '-n 1 $solver : '
                         + '-n 1 $collector"',

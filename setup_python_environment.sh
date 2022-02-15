@@ -11,6 +11,7 @@ pip -V
 
 # already installed in image: numpy
 pip install matplotlib scipy ruamel.yaml
+pip install mpi4py
 # if we want to install our own git submodules
 # pip install -e bgem
 
