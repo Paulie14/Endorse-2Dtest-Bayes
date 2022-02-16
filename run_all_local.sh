@@ -35,14 +35,12 @@ fi
 
 
 if [ "$run" == true ]; then
-  echo RUN
-#  command="source ./venv/bin/activate ; python3 run_all.py $mcmc_config $output_dir $N oversubscribe"
-#  ./endorse_fterm exec "bash -c \"$command\""
+  command="source ./venv/bin/activate ; python3 run_all.py $problem_path $output_dir $n_chains oversubscribe"
+  ./endorse_fterm exec "bash -c \"$command\""
 fi
 
 # visualize
 if [ "$visualize" == true ]; then
-  echo VISUALIZE
-#  command="source ./venv/bin/activate ; python3 run_all.py $mcmc_config $output_dir $N visualize"
-#  ./endorse_fterm exec "bash -c \"$command\""
+  command="source ./venv/bin/activate ; python3 run_all.py $problem_path $output_dir $n_chains visualize"
+  ./endorse_fterm exec "bash -c \"$command\""
 fi
