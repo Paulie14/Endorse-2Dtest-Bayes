@@ -12,9 +12,9 @@ from flow123d_simulation import endorse_2Dtest
 import aux_functions
 
 
-def setup_config():
+def setup_config(output_dir):
     # create and cd workdir
-    work_dir = os.path.join(rep_dir, "flow123d_sim")
+    work_dir = os.path.join(rep_dir, output_dir)
 
     # read config file and setup paths
     with open(os.path.join(rep_dir, "config.yaml"), "r") as f:
@@ -50,9 +50,9 @@ def setup_dirs(config_dict):
 
 
 class Wrapper:
-    def __init__(self, solver_id=0):
+    def __init__(self, solver_id, output_dir):
 
-        config_dict = setup_config()
+        config_dict = setup_config(output_dir)
 
         config_dict["solver_id"] = solver_id
 

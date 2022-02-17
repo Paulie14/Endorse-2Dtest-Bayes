@@ -192,7 +192,9 @@ class endorse_2Dtest():
         output_dir = "output_" + fname
         config_dict[param_key]["output_dir"] = output_dir
 
-        if not all([os.path.isfile(os.path.join(output_dir, f)) for f in result_files]):
+        if all([os.path.isfile(os.path.join(output_dir, f)) for f in result_files]):
+            status = True
+        else:
             aux_functions.substitute_placeholders(
                 os.path.join(config_dict["common_files_dir"],
                              fname + '_tmpl.yaml'),

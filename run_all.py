@@ -88,7 +88,7 @@ if __name__ == "__main__":
         else:
             opt = " "
         sampler = "python3 -m mpi4py surrDAMH/surrDAMH/process_SAMPLER.py " + output_dir + " "
-        solver = "python3 -m mpi4py surrDAMH/surrDAMH/process_SOLVER.py " + problem_path + " "
+        solver = "python3 -m mpi4py surrDAMH/surrDAMH/process_SOLVER.py " + problem_path + " " + output_dir + " "
         collector = "python3 -m mpi4py surrDAMH/surrDAMH/process_COLLECTOR.py "
 
         # prepare running command for local run
