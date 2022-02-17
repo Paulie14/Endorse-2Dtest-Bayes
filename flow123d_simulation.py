@@ -111,7 +111,11 @@ class endorse_2Dtest():
         print("Running Flow123d - HM...finished")
 
         if self._config["make_plots"]:
-            self.observe_time_plot(config_dict)
+            try:
+                self.observe_time_plot(config_dict)
+            except:
+                print("Making plot of sample results failed.")
+                return -2, []
 
         print("Finished computation")
 
@@ -125,7 +129,7 @@ class endorse_2Dtest():
             return 1, collected_values  # tag, value_list
         except:
             print("Collecting sample results failed.")
-            return -2, []
+            return -3, []
 
 
     # def check_data(self, data, minimum, maximum):
