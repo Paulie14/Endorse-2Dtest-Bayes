@@ -188,7 +188,9 @@ class endorse_2Dtest():
         status = False
         params = config_dict[param_key]
         fname = params["in_file"]
-        arguments = config_dict["_aux_flow_path"].copy()
+        # arguments = config_dict["_aux_flow_path"].copy()
+        arguments = ['env', '-i']
+        arguments.extend(config_dict["_aux_flow_path"].copy())
         output_dir = "output_" + fname
         config_dict[param_key]["output_dir"] = output_dir
 

@@ -26,7 +26,7 @@ copy_files: [config.yaml, config_mcmc_bayes.json, flow123d_simulation.py,
 local:
   flow_executable:
     ### this is the simplest case when using inside docker (or singularity) image
-    - flow123d
+    - /opt/flow123d/bin/flow123d
     ### this is for installed Flow123d package or individual build
 #    - /home/domesova/flow123d_3.1.0/bin/fterm.sh
 #    - /home/paulie/local/flow123d/flow123d_3.1.0/bin/fterm.sh

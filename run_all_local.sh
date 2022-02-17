@@ -35,7 +35,7 @@ fi
 
 
 if [ "$run" == true ]; then
-  command="source ./venv/bin/activate ; python3 run_all.py $problem_path $output_dir $n_chains oversubscribe"
+  command="source ./venv/bin/activate ; python3 -m mpi4py run_all.py $problem_path $output_dir $n_chains"
   ./endorse_fterm exec "bash -c \"$command\""
 fi
 

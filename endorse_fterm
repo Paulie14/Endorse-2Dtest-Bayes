@@ -27,12 +27,16 @@ ABS_FLOW_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 REL_FLOW_DIR=$(realpath --relative-to=$(pwd) $ABS_FLOW_DIR)
 
 # orig image with OpenMPI
-image_name=ci-gnu
-image_tag=master_2815a84fd
+#image_name=ci-gnu
+#image_tag=master_2815a84fd
 
-# new image without OpenMPI, withou mpi4py
+# new image without OpenMPI, without mpi4py
 #image_name=geomop
 #image_tag=master_29638ef6f
+
+# only MPICH, mpi4py installed
+image_name=geomop
+image_tag=master_8c1b58980
 
 function get_base_image() {
     local image=flow123d/$image_name:$image_tag
