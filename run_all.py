@@ -132,11 +132,11 @@ if __name__ == "__main__":
                 'sampler="$bash_py ' + sampler + '\'"',
                 'solver="$bash_py ' + solver + '\'"',
                 'collector="$bash_py ' + collector + '\'"',
-                '\n',
-                '# load correct MPI lib',
-                'module load mpich-3.0.2-gcc',
-                'which mpirun',
-                'mpirun --version',
+                # '\n',
+                # '# load correct MPI lib',
+                # 'module load mpich-3.0.2-gcc',
+                # 'which mpirun',
+                # 'mpirun --version',
                 '\n# get hostfile and pass into container mpiexec',
                 'local_host_file="$output_dir/hostfile_$PBS_JOBID"',
                 'cp $PBS_NODEFILE $local_host_file',
@@ -164,4 +164,5 @@ if __name__ == "__main__":
         os.system(command)
     else:
         # PBS script
-        os.system("qsub " + os.path.join(config_dict["work_dir"], "pbs_job.sh"))
+        # os.system("qsub " + os.path.join(config_dict["work_dir"], "pbs_job.sh"))
+        exit(0)
