@@ -23,7 +23,7 @@ def preprocess(config_dict, problem_path):
         conf["no_observations"] = len(values)
         conf["noise_type"] = "Gaussian_process"
         conf["noise_grid"] = times
-        conf["noise_parameters"] = [[30, 50]] * 4
+        conf["noise_parameters"] = [[30, 50]] * len(boreholes)
         conf["solver_module_path"] = os.path.join(config_dict["script_dir"], "flow_wrapper.py")
 
     with open(problem_path, "w") as f:
