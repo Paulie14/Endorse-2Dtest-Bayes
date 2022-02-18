@@ -1,6 +1,6 @@
 {
     "debug": false,
-    "no_parameters": 4,
+    "no_parameters": 2,
     "_comment": "solver_module_path will be set automatically from process.py",
     "no_observations": 104,
     "transformations": [
@@ -17,36 +17,17 @@
                 "mu": -17.391,
                 "sigma": 1.0
             }
-        ],
-        [
-            "normal_to_lognormal",
-            {
-                "mu": 26.0,
-                "sigma": 1.2
-            }
-        ],
-        [
-            "normal_to_lognormal",
-            {
-                "mu": 18.6,
-                "sigma": 1.2
-            }
         ]
     ],
-    "initial_sample_type": "prior",
     "problem_parameters": {
         "_comment_prior": "if prior_mean and prior_std is not specified, default internal distribution is N(0,1)",
         "prior_mean": [
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0
         ],
         "prior_std": [
-            1.0,
-            1.0,
-            1.0,
-            1.0
+            1,
+            1
         ],
         "_comment1": "observations will be set by measured_data.py automatically",
         "observations": [
@@ -154,7 +135,8 @@
             293.5738303597686,
             297.15187946459776,
             293.1977826053328
-        ]
+        ],
+        "noise_std": 10.0
     },
     "_comment2": "solver_module_path will be set automatically from process.py",
     "solver_module_path": "/home/domesova/GIT/Endorse-2Dtest-Bayes/flow_wrapper.py",
@@ -164,26 +146,27 @@
     "save_raw_data": true,
     "save_transformed_data": true,
     "solver_parameters": {},
-    "no_solvers": 4,
+    "no_solvers": 20,
+    "initial_sample_type": "prior",
     "samplers_list": [
         {
             "type": "MH",
-            "max_samples": 10,
-            "time_limit": 120,
+            "max_samples": 100,
+            "time_limit": 3600,
             "proposal_std": 0.2,
             "surrogate_is_updated": true
         },
         {
             "type": "DAMH",
-            "max_samples": 10,
-            "time_limit": 120,
+            "max_samples": 10000,
+            "time_limit": 3600,
             "proposal_std": 0.4,
             "surrogate_is_updated": true
         },
         {
             "type": "DAMH",
-            "max_samples": 10,
-            "time_limit": 120,
+            "max_samples": 10000,
+            "time_limit": 7200,
             "proposal_std": 0.6,
             "surrogate_is_updated": false
         }

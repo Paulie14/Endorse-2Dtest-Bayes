@@ -12,7 +12,7 @@ collect_only: False
 mesh_only: False
 make_plots: True
 
-clean_sample_dir: False # True
+clean_sample_dir: True
 
 copy_files: [config.yaml, config_mcmc_bayes.json, flow123d_simulation.py,
              A01_hm_tmpl.yaml,
@@ -87,9 +87,9 @@ mcmc_parameters:
   - bulk_conductivity
   - storativity
 #  - biot_coefficient
-  - young_modulus
+#  - young_modulus
 #  - poisson_ratio
-  - init_stress_x
+#  - init_stress_x
 
 # parameters substituted into the HM model template
 hm_params:

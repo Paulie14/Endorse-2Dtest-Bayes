@@ -1,0 +1,144 @@
+{
+    "debug": false,
+    "no_parameters": 4,
+    "_comment": "solver_module_path will be set automatically from process.py",
+    "no_observations": 26,
+    "transformations": [
+        [
+            "normal_to_lognormal",
+            {
+                "mu": -32.747,
+                "sigma": 1.0
+            }
+        ],
+        [
+            "normal_to_lognormal",
+            {
+                "mu": -17.391,
+                "sigma": 1.0
+            }
+        ],
+        [
+            "normal_to_lognormal",
+            {
+                "mu": 26.0,
+                "sigma": 1.2
+            }
+        ],
+        [
+            "normal_to_lognormal",
+            {
+                "mu": 18.6,
+                "sigma": 1.2
+            }
+        ]
+    ],
+    "initial_sample_type": "prior",
+    "problem_parameters": {
+        "_comment_prior": "if prior_mean and prior_std is not specified, default internal distribution is N(0,1)",
+        "prior_mean": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        "prior_std": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "_comment1": "observations will be set by measured_data.py automatically",
+        "observations": [
+            286.75249430532506
+        ]
+    },
+    "_comment2": "solver_module_path will be set automatically from process.py",
+    "solver_module_path": "/home/domesova/GIT/Endorse-2Dtest-Bayes/flow_wrapper1.py",
+    "solver_module_name": "flow_wrapper",
+    "solver_init_name": "Wrapper",
+    "solver_returns_tag": true,
+    "save_raw_data": true,
+    "save_transformed_data": true,
+    "solver_parameters": {},
+    "no_solvers": 4,
+    "samplers_list": [
+        {
+            "type": "MH",
+            "max_samples": 10,
+            "time_limit": 120,
+            "proposal_std": 0.2,
+            "surrogate_is_updated": true
+        },
+        {
+            "type": "DAMH",
+            "max_samples": 10,
+            "time_limit": 120,
+            "proposal_std": 0.4,
+            "surrogate_is_updated": true
+        },
+        {
+            "type": "DAMH",
+            "max_samples": 10,
+            "time_limit": 120,
+            "proposal_std": 0.6,
+            "surrogate_is_updated": false
+        }
+    ],
+    "surrogate_type": "rbf",
+    "surr_solver_parameters": {
+        "kernel_type": 1
+    },
+    "surr_updater_parameters": {
+        "kernel_type": 1,
+        "no_keep": 500,
+        "expensive": false
+    },
+    "noise_type": "Gaussian_process",
+    "noise_grid": [
+        0.0,
+        10.0,
+        18.0,
+        28.0,
+        38.0,
+        48.0,
+        58.0,
+        68.0,
+        78.0,
+        88.0,
+        98.0,
+        100.0,
+        120.0,
+        140.0,
+        160.0,
+        180.0,
+        200.0,
+        220.0,
+        240.0,
+        260.0,
+        280.0,
+        300.0,
+        320.0,
+        340.0,
+        360.0,
+        365.0
+    ],
+    "noise_parameters": [
+        [
+            30,
+            50
+        ],
+        [
+            30,
+            50
+        ],
+        [
+            30,
+            50
+        ],
+        [
+            30,
+            50
+        ]
+    ]
+}

@@ -9,7 +9,7 @@ from measured_data import MeasuredData
 
 def just_run_flow123d(measured_data):
     wrap = flow_wrapper.Wrapper(solver_id=1)
-    wrap.set_parameters(data_par=[7.794869596611009e-15, 0.14035455365537208])
+    wrap.set_parameters(data_par=[6e-15,2.8e-8])#[7.794869596611009e-15, 0.14035455365537208])
     t = time.time()
     res = wrap.get_observations()
     md.plot_comparison(res, wrap.sim.sample_dir)
@@ -31,16 +31,19 @@ if __name__ == "__main__":
     oversubscribe = False  # if there are not enough slots available
     visualize = False  # True = only visualization
     problem_path = None
+    output_dir = None
 
     len_argv = len(sys.argv)
     assert len_argv > 1, "Specify configuration json file!"
     if len_argv > 1:
         problem_path = sys.argv[1]
     if len_argv > 2:
-        N = int(sys.argv[2])  # number of MH/DAMH chains
+        output_dir = sys.argv[2] + "/"
     if len_argv > 3:
-        oversubscribe = sys.argv[3] == "oversubscribe"
-        visualize = sys.argv[3] == "visualize"
+        N = int(sys.argv[3])  # number of MH/DAMH chains
+    if len_argv > 4:
+        oversubscribe = sys.argv[4] == "oversubscribe"
+        visualize = sys.argv[4] == "visualize"
 
     basename = os.path.basename(problem_path)
     problem_name, fext = os.path.splitext(basename)
@@ -79,13 +82,13 @@ if __name__ == "__main__":
         #     command = "python3 examples/visualization/" + problem_name + ".py " + str(N)
         # else:
         #     command = "python3 examples/visualization/general_visualization.py " + str(N) + " " + problem_name
-        command = "python3 examples/visualization/general_visualization.py " + str(N) + " " + problem_path
+        command = "python3 examples/visualization/general_visualization.py " + str(N) + " " + problem_path + " " + output_dir
     else:
         if oversubscribe:
             opt = " --oversubscribe "
         else:
             opt = " "
-        sampler = " -n " + str(N) + opt + "python3 -m mpi4py surrDAMH/process_SAMPLER.py "
+        sampler = " -n " + str(N) + opt + "python3 -m mpi4py surrDAMH/process_SAMPLER.py " + output_dir + " "
         solver = " -n 1" + opt + "python3 -m mpi4py surrDAMH/process_SOLVER.py " + problem_path + " "
         collector = " -n 1" + opt + "python3 -m mpi4py surrDAMH/process_COLLECTOR.py "
 
