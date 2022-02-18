@@ -14,7 +14,7 @@ def preprocess(config_dict, problem_path):
     md.plot_all_data()
     md.plot_interp_data()
 
-    boreholes = ["HGT1-5", "HGT1-4", "HGT2-4", "HGT2-3"]
+    boreholes = config_dict["mcmc_observe_point"]
     times, values = md.generate_measured_samples(boreholes)
 
     with open(problem_path) as f:

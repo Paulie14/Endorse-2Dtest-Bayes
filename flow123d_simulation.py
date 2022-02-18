@@ -9,6 +9,7 @@ import shutil
 import csv
 import ruamel.yaml as yaml
 from typing import List
+import traceback
 
 # from bgem.gmsh import gmsh
 # from bgem.gmsh import gmsh_io
@@ -114,7 +115,8 @@ class endorse_2Dtest():
             try:
                 self.observe_time_plot(config_dict)
             except:
-                print("Making plot of sample results failed.")
+                print("Making plot of sample results failed:")
+                traceback.print_exc()
                 return -2, []
 
         print("Finished computation")
@@ -128,7 +130,8 @@ class endorse_2Dtest():
             print("Sample results collected.")
             return 1, collected_values  # tag, value_list
         except:
-            print("Collecting sample results failed.")
+            print("Collecting sample results failed:")
+            traceback.print_exc()
             return -3, []
 
 
@@ -149,6 +152,7 @@ class endorse_2Dtest():
 
     def collect_results(self, config_dict):
         output_dir = config_dict["hm_params"]["output_dir"]
+        points2collect = config_dict["mcmc_observe_point"]
 
         # the times defined in input
         times = np.array(generate_time_axis(config_dict))
@@ -156,9 +160,17 @@ class endorse_2Dtest():
             loaded_yaml = yaml.load(f, yaml.CSafeLoader)
             points = loaded_yaml['points']
             point_names = [p["name"] for p in points]
-            print("Collecting results for observe points: ", point_names)
+
+            points2collect_indices = []
+            for p2c in points2collect:
+                tmp = [i for i, pn in enumerate(point_names) if pn == p2c]
+                assert len(tmp) == 1
+                points2collect_indices.append(tmp[0])
+
+            print("Collecting results for observe points: ", points2collect)
             data = loaded_yaml['data']
-            values = np.array([d["pressure_p0"] for d in data])
+            data_values = np.array([d["pressure_p0"] for d in data])
+            values = data_values[:, points2collect_indices]
             obs_times = np.array([d["time"] for d in data]).transpose()
 
             # check that observe data are computed at all times of defined time axis

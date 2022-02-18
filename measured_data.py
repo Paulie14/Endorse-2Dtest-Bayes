@@ -81,11 +81,10 @@ class MeasuredData:
         fig_file = os.path.join(self._config["work_dir"], "measured_data_TSX.pdf")
         plt.savefig(fig_file)
 
-    def plot_comparison(self, computed_data, output_dir):
+    def plot_comparison(self, computed_data, output_dir, boreholes):
         fig, ax1 = plt.subplots()
         ax1.set_xlabel('time [d]')
         ax1.set_ylabel('pressure [m]')
-        boreholes = ["HGT1-5", "HGT1-4", "HGT2-4", "HGT2-3"]
 
         # self.plot_data_set(self.borehole_names, self.measured_data, ax1, linestyle='solid')
         t = generate_time_axis(self._config)
@@ -94,7 +93,7 @@ class MeasuredData:
         for bname in boreholes:
             p_interp = self.interp_data[bname](t)
             end_idx = idx + len(t)
-            p_comp = computed_data[1][idx:end_idx]
+            p_comp = computed_data[idx:end_idx]
             ax1.plot(t, p_interp, color=self.temp_color[bname], label=bname, linestyle='dotted')
             ax1.plot(t, p_comp, color=self.temp_color[bname], label=bname, linestyle='solid')
             idx = idx + len(t)
