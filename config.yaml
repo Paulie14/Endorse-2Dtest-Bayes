@@ -102,14 +102,14 @@ mcmc_parameters:
   - bulk_conductivity
   - storativity
 #  - biot_coefficient
-#  - young_modulus
+  - young_modulus
 #  - poisson_ratio
-#  - init_stress_x
+  - init_stress_x
 
 mcmc_observe_point:
-#  - HGT1-5
+  - HGT1-5
   - HGT1-4
-#  - HGT2-4
+  - HGT2-4
   - HGT2-3
 
 # parameters substituted into the HM model template

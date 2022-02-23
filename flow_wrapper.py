@@ -58,7 +58,6 @@ class Wrapper:
 
         clean = config_dict["clean_sample_dir"]
         self.sim = endorse_2Dtest(config_dict, clean=clean)
-        self.no_parameters = 2
         
     def set_parameters(self, data_par):
         # conductivity = trans.normal_to_lognormal(data_par[0])
