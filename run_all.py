@@ -5,6 +5,7 @@ import ruamel.yaml as yaml
 
 import aux_functions
 from preprocess import preprocess
+from surrDAMH.surrDAMH.configuration import Configuration
 
 
 # this script is supposed to be dependent only on python packages present on any machine
@@ -71,14 +72,14 @@ if __name__ == "__main__":
     command = None
     if visualize:
         # os.error("Visualization not implemented.")
-        # if os.path.exists("examples/visualization/" + problem_name + ".py"):
-        #     command = "python3 examples/visualization/" + problem_name + ".py " + str(N)
-        # else:
-        #     command = "python3 examples/visualization/general_visualization.py " + str(N) + " " + problem_name
-        args = [str(N), problem_path, output_dir]
-        command = "python3 surrDAMH/examples/visualization/general_visualization.py " + " ".join(args)
-        # local command call
         os.chdir(config_dict["script_dir"])
+        C = Configuration(N, problem_path)
+        args = [str(N), problem_path, output_dir]
+        if os.path.exists("surrDAMH/examples/visualization/" + C.problem_name + ".py"):
+            command = "python3 surrDAMH/examples/visualization/" + C.problem_name + ".py " + " ".join(args)
+        else:
+            command = "python3 surrDAMH/examples/visualization/general_visualization.py " + " ".join(args)
+        # local command call
         print(command)
         os.system(command)
         exit(0)

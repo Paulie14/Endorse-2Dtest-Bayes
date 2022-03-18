@@ -11,7 +11,7 @@ run_on_metacentrum: False
 #task_size: 0.001
 collect_only: False
 mesh_only: False
-make_plots: True
+make_plots: False
 
 clean_sample_dir: True
 

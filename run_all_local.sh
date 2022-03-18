@@ -42,7 +42,8 @@ fi
 
 # run sampling
 if [ "$run" == true ]; then
-  command="source ./venv/bin/activate && python3 -m mpi4py run_all.py $problem_path $output_dir $n_chains"
+  command="source ./venv/bin/activate && export OMP_NUM_THREADS=2 && python3 -m mpi4py run_all.py $problem_path $output_dir $n_chains"
+#  command="source ./venv/bin/activate && python3 -m mpi4py run_all.py $problem_path $output_dir $n_chains"
 fi
 
 # visualize
