@@ -1,11 +1,11 @@
 import os
 import sys
-import json
+import ruamel.yaml as yaml
 import time
 
 import flow_wrapper
 from measured_data import MeasuredData
-
+import numpy as np
 
 def just_run_flow123d(measured_data):
     wrap = flow_wrapper.Wrapper(solver_id=1)
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     problem_path = None
 
     len_argv = len(sys.argv)
-    assert len_argv > 1, "Specify configuration json file!"
+    assert len_argv > 1, "Specify configuration yaml file!"
     if len_argv > 1:
         problem_path = sys.argv[1]
     if len_argv > 2:
@@ -58,18 +58,20 @@ if __name__ == "__main__":
     # JUST RUN FLOW123D FOR TESTING
     # just_run_flow123d(md)
 
-
     with open(problem_path) as f:
-        conf = json.load(f)
-        conf["problem_parameters"]["observations"] = values
-        conf["no_observations"] = len(values)
-        conf["noise_type"] = "Gaussian_process"
-        conf["noise_grid"] = times
-        conf["noise_parameters"] = [[30, 50]] * 4
-        conf["solver_module_path"] = os.path.join(config_dict["script_dir"], "flow_wrapper.py")
+        text = f.read()
+  
+    Y = yaml.YAML()
+    conf = Y.load(text)
+    conf["problem_parameters"]["observations"] = np.array(values).tolist()
+    conf["no_observations"] = len(values)
+    conf["noise_type"] = "Gaussian_process"
+    conf["noise_grid"] = np.array(times).tolist()
+    conf["noise_parameters"] = [[30, 50]] * len(boreholes)
+    conf["solver_module_path"] = os.path.join(config_dict["script_dir"], "flow_wrapper.py")
 
-    with open(problem_path, "w") as f:
-        json.dump(conf, f, indent=4)
+    with open(problem_path, 'w') as f:
+        Y.dump(conf, f)
 
     # run sampling
     command = None

@@ -1,10 +1,10 @@
 import os
 import sys
-import json
+import ruamel.yaml as yaml
 
 import flow_wrapper
 from measured_data import MeasuredData
-
+import numpy as np
 
 def preprocess(config_dict, problem_path):
     # prepare measured data as observations
@@ -18,16 +18,19 @@ def preprocess(config_dict, problem_path):
     times, values = md.generate_measured_samples(boreholes)
 
     with open(problem_path) as f:
-        conf = json.load(f)
-        conf["problem_parameters"]["observations"] = values
-        conf["no_observations"] = len(values)
-        conf["noise_type"] = "Gaussian_process"
-        conf["noise_grid"] = times
-        conf["noise_parameters"] = [[30, 50]] * len(boreholes)
-        conf["solver_module_path"] = os.path.join(config_dict["script_dir"], "flow_wrapper.py")
+        text = f.read()
+  
+    Y = yaml.YAML()
+    conf = Y.load(text)
+    conf["problem_parameters"]["observations"] = np.array(values).tolist()
+    conf["no_observations"] = len(values)
+    conf["noise_type"] = "Gaussian_process"
+    conf["noise_grid"] = np.array(times).tolist()
+    conf["noise_parameters"] = [[30, 50]] * len(boreholes)
+    conf["solver_module_path"] = os.path.join(config_dict["script_dir"], "flow_wrapper.py")
 
-    with open(problem_path, "w") as f:
-        json.dump(conf, f, indent=4)
+    with open(problem_path, 'w') as f:
+        Y.dump(conf, f)
 
     # TODO: move the mesh preparation here
 

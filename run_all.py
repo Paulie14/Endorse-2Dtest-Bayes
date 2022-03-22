@@ -52,7 +52,7 @@ if __name__ == "__main__":
 
     # read parameters
     len_argv = len(sys.argv)
-    assert len_argv > 1, "Specify configuration json file!"
+    assert len_argv > 1, "Specify configuration yaml file!"
     if len_argv > 1:
         problem_path = sys.argv[1]
     if len_argv > 2:

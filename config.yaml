@@ -15,7 +15,7 @@ make_plots: False
 
 clean_sample_dir: True
 
-copy_files: [config.yaml, config_mcmc_bayes.json, flow123d_simulation.py,
+copy_files: [config.yaml, config_mcmc_bayes.yaml, flow123d_simulation.py,
              A01_hm_tmpl.yaml,
              A02_hm_tmpl.yaml,
 #             B02ustaleni_hm_tmpl.yaml,
