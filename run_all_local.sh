@@ -40,13 +40,13 @@ fi
 
 # run sampling
 if [ "$run" == true ]; then
-  command="source ./venv/bin/activate && export OMP_NUM_THREADS=2 && python3 -m mpi4py run_all.py $problem_path $output_dir $n_chains"
-#  command="source ./venv/bin/activate && python3 -m mpi4py run_all.py $problem_path $output_dir $n_chains"
+  command="source ./venv/bin/activate && export OMP_NUM_THREADS=2 && python3 -m mpi4py run_all.py $output_dir $n_chains"
+#  command="source ./venv/bin/activate && python3 -m mpi4py run_all.py $output_dir $n_chains"
 fi
 
 # visualize
 if [ "$visualize" == true ]; then
-  command="source ./venv/bin/activate && python3 run_all.py $problem_path $output_dir $n_chains visualize"
+  command="source ./venv/bin/activate && python3 run_all.py $output_dir $n_chains visualize"
 fi
 
 
@@ -61,7 +61,7 @@ if [ "$sing" == true ]; then
 #  bash_py="bash -c 'source ./venv/bin/activate &&"
 
   # run setup, prepare PBS script (locally, single proc)
-#  command="$sing_command $bash_py python3 -m mpi4py run_all.py $problem_path $output_dir $n_chains'"
+#  command="$sing_command $bash_py python3 -m mpi4py run_all.py $output_dir $n_chains'"
   command="$sing_command bash -c \"$command\""
   echo $command
   eval $command

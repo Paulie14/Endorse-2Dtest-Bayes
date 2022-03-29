@@ -5,19 +5,17 @@ set -x
 # set running on metacentrum to True
 sed -i '/run_on_metacentrum:/c\run_on_metacentrum: True' config.yaml
 
-# MCMC Bayes configuration file
-problem_path=$(realpath $1)
 # number of Markov chains
-n_chains=$2
+n_chains=$1
 # output directory
-output_dir=$3
+output_dir=$2
 
 # command
 run=false
 visualize=false
-if [ "$4" == "visualize" ]; then
+if [ "$3" == "visualize" ]; then
   visualize=true
-elif [ "$4" == "run" ]; then
+elif [ "$3" == "run" ]; then
   run=true
 fi
 
@@ -32,7 +30,7 @@ bash_py="bash -c 'source ./venv/bin/activate &&"
 
 
 # run setup, prepare PBS script (locally, single proc)
-command="$sing_command $bash_py python3 -m mpi4py run_all.py $problem_path $output_dir $n_chains'"
+command="$sing_command $bash_py python3 -m mpi4py run_all.py $output_dir $n_chains'"
 echo $command
 eval $command
 
