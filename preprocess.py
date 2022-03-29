@@ -26,7 +26,11 @@ def preprocess(config_dict):
     conf = yaml_handler.load(file_content)
     # print(conf.ca)
 
+    npar = len(conf_bayes["parameters"])
+    conf["no_parameters"] = npar
     conf["problem_parameters"]["observations"] = np.array(values).tolist()
+    conf["problem_parameters"]["prior_mean"] = [0.0] * npar
+    conf["problem_parameters"]["prior_std"] = [1.0] * npar
     conf["no_observations"] = len(values)
     conf["noise_type"] = "Gaussian_process"
     conf["noise_grid"] = np.array(times).tolist()
