@@ -3,7 +3,7 @@
 
 # GENERAL SETTINGS:
 no_parameters: 4 # number of parameters
-no_observations: 104 # number of observations (WILL BE SET AUTOMATICALLY)
+no_observations: 24  # number of observations (WILL BE SET AUTOMATICALLY)
 save_raw_data: true # save all data (including rejected samples)
 save_transformed_data: true
 debug: false # print debug messages (true/false)
@@ -13,17 +13,21 @@ debug: false # print debug messages (true/false)
 # internally, normal distribution is used
 # if the prior distribution is not normal, transformations have to be specified
 transformations:
-- - normal_to_lognormal
-  - mu: -32.747
+- type: normal_to_lognormal
+  options:
+    mu: -32.747
     sigma: 1.0
-- - normal_to_lognormal
-  - mu: -17.391
+- type: normal_to_lognormal
+  options:
+    mu: -17.391
     sigma: 1.0
-- - normal_to_lognormal
-  - mu: 26.0
+- type: normal_to_lognormal
+  options:
+    mu: 26.0
     sigma: 1.2
-- - normal_to_lognormal
-  - mu: 18.6
+- type: normal_to_lognormal
+  options:
+    mu: 18.6
     sigma: 1.2
 
 
@@ -36,28 +40,28 @@ samplers_list: # stages of the sampling process (here MH, DAMH-SMU, DAMH)
   surrogate_is_updated: true
   proposal_std: 0.2
   max_samples: 10000
-  time_limit: 180
-  
+  time_limit: 120
+
 # stage 2: DAMH algorithm with surrogate model updates
 - type: DAMH
   surrogate_is_updated: true
   proposal_std: 0.4
   max_samples: 10000
-  time_limit: 180
+  time_limit: 60
 
 # stage 3: DAMH algorithm, surrogate model is no longer updated
 - type: DAMH
   surrogate_is_updated: false
   proposal_std: 0.6
   max_samples: 10000
-  time_limit: 720
-  
+  time_limit: 60
+
 
 # SOLVER SETTINGS (here Flow123d wrapper):
 no_solvers: 20 # number of solvers running in parallel
 solver_module_name: flow_wrapper
 # solver_module_path WILL BE SET AUTOMATICALLY by process.py
-solver_module_path: /home/domesova/GIT/Endorse-2Dtest-Bayes/flow_wrapper.py
+solver_module_path: /home/paulie/Workspace/Endorse-2Dtest-Bayes/flow_wrapper.py
 solver_init_name: Wrapper
 solver_returns_tag: true # wrapper returns [convergence_tag, collected_values]
 solver_parameters: {} # optional wrapper-specific parameters
@@ -77,41 +81,19 @@ surr_updater_parameters:
 # instead of problem_parameters["noise_std"], noise_type + noise_parameters + noise_grid is specified
 noise_type: Gaussian_process
 noise_parameters:
-- - 30
+- &id001
+  - 30
   - 50
-- - 30
-  - 50
-- - 30
-  - 50
-- - 30
-  - 50
+- *id001
+- *id001
+- *id001
 noise_grid: # WILL BE SET AUTOMATICALLY
 - 0.0
 - 10.0
 - 18.0
+- 23.0
 - 28.0
-- 38.0
-- 48.0
-- 58.0
-- 68.0
-- 78.0
-- 88.0
-- 98.0
-- 100.0
-- 120.0
-- 140.0
-- 160.0
-- 180.0
-- 200.0
-- 220.0
-- 240.0
-- 260.0
-- 280.0
-- 300.0
-- 320.0
-- 340.0
-- 360.0
-- 365.0
+- 30.0
 problem_parameters:
 # internal distribution (before transformation) is N(prior_mean,prior_std)
 # if prior_mean and prior_std is not specified, default internal distribution is N(0,1)
@@ -130,104 +112,24 @@ problem_parameters:
   - 286.75249430532506
   - 647.505992837846
   - 772.4661385282469
+  - 791.1077604157214
   - 783.6246889580977
-  - 742.7672713999344
-  - 700.0398407461971
-  - 637.3826917709317
-  - 608.9679710142716
-  - 591.296507994133
-  - 556.9603403850701
-  - 525.1388236171608
-  - 520.1124655870594
-  - 520.8731565523746
-  - 485.57034676820814
-  - 472.1092006040116
-  - 448.5445128282981
-  - 425.33668246812437
-  - 373.48015289184804
-  - 349.4477870584667
-  - 325.8497343667235
-  - 307.90382553609146
-  - 301.22231190182674
-  - 304.08469318741027
-  - 283.7482877067673
-  - 294.6750979559723
-  - 299.28896213525434
+  - 778.0634908088443
   - 315.51781659523283
   - 446.8545403913626
   - 532.3926678804722
+  - 556.5910001244496
   - 574.2244347230497
-  - 590.6051314322069
-  - 597.7642637603241
-  - 600.5070807685729
-  - 604.591092468254
-  - 604.952871127951
-  - 604.0922733680742
-  - 599.348453255019
-  - 598.7769972775626
-  - 600.5320069154652
-  - 600.6250273964257
-  - 599.357825072405
-  - 599.7933892670369
-  - 600.4529072742156
-  - 580.071142703173
-  - 571.041553199853
-  - 553.9753955580346
-  - 551.952147817864
-  - 549.378119975896
-  - 547.9849306280188
-  - 544.9061631306106
-  - 541.6401765570815
-  - 538.6481128534051
+  - 577.864509326157
   - 248.42112207763773
   - 56.84447114747088
   - 46.566220939536514
+  - 44.06975877090735
   - 43.07970954731006
-  - 42.68004399162037
-  - 46.044217498807676
-  - 51.4923777952752
-  - 57.53614964997735
-  - 61.35442705583852
-  - 59.55906156128841
-  - 60.23785297762984
-  - 61.36842121131461
-  - 80.39089422522265
-  - 81.70885515375784
-  - 92.31140635497205
-  - 89.96423051997343
-  - 88.85135946035798
-  - 79.30151652980085
-  - 79.32740870935103
-  - 82.57181536034764
-  - 77.68481646284758
-  - 78.74181137328071
-  - 84.44015430647482
-  - 75.71202077965455
-  - 82.99945071792871
-  - 93.83130011178403
+  - 43.38241440918836
   - 293.8407187697135
   - 187.16294744263965
   - 183.35544585553924
+  - 187.34367102074373
   - 192.62865242900216
-  - 201.605880912991
-  - 208.18909202587105
-  - 213.63881049092677
-  - 220.49109334662128
-  - 225.0128458327417
-  - 228.34181164319756
-  - 231.05729454427424
-  - 232.13113063971971
-  - 242.1830056638933
-  - 256.0765574619743
-  - 264.0514924520037
-  - 269.54939349959443
-  - 277.94348589119164
-  - 279.30512673370146
-  - 280.9805764723904
-  - 280.7544367636357
-  - 284.55246256988215
-  - 287.65549527425765
-  - 292.08277335225125
-  - 293.5738303597686
-  - 297.15187946459776
-  - 293.1977826053328
+  - 194.68194576479527

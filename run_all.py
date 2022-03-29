@@ -35,8 +35,11 @@ def setup(output_dir):
     # copy common files
     for f in config_dict["copy_files"]:
         filepath = os.path.join(common_files_dir, f)
-        if not os.path.isfile(filepath):
-            shutil.copyfile(os.path.join(rep_dir, f), filepath)
+        # if not os.path.isfile(filepath):
+        shutil.copyfile(os.path.join(rep_dir, f), filepath)
+
+    config_dict["bayes_config_file"] = os.path.join(common_files_dir,
+                                                    config_dict["surrDAMH_parameters"]["config_file"])
 
     return config_dict
 
@@ -44,27 +47,25 @@ def setup(output_dir):
 if __name__ == "__main__":
 
     # default parameters
+    output_dir = "flow123d_sim"
     N = 2  # default number of sampling processes
     oversubscribe = False  # if there are not enough slots available
     visualize = False  # True = only visualization
-    problem_path = None
-    output_dir = "flow123d_sim"
 
     # read parameters
     len_argv = len(sys.argv)
     assert len_argv > 1, "Specify configuration yaml file!"
     if len_argv > 1:
-        problem_path = sys.argv[1]
+        output_dir = sys.argv[1]
     if len_argv > 2:
-        output_dir = sys.argv[2]
+        N = int(sys.argv[2])  # number of MH/DAMH chains
     if len_argv > 3:
-        N = int(sys.argv[3])  # number of MH/DAMH chains
-    if len_argv > 4:
-        oversubscribe = sys.argv[4] == "oversubscribe"
-        visualize = sys.argv[4] == "visualize"
+        oversubscribe = sys.argv[3] == "oversubscribe"
+        visualize = sys.argv[3] == "visualize"
 
     # setup paths and directories
     config_dict = setup(output_dir)
+    problem_path = config_dict["bayes_config_file"]
 
     # run sampling
     # paths are relative to repository dir
@@ -154,8 +155,7 @@ if __name__ == "__main__":
             with open("pbs_job.sh", 'w') as f:
                 f.write('\n'.join(lines))
 
-
-    preprocess(config_dict, problem_path)
+    preprocess(config_dict)
 
     # final command call
     if not config_dict["run_on_metacentrum"]:

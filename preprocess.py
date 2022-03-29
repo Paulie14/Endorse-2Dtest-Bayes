@@ -6,7 +6,7 @@ import flow_wrapper
 from measured_data import MeasuredData
 import numpy as np
 
-def preprocess(config_dict, problem_path):
+def preprocess(config_dict):
     # prepare measured data as observations
     md = MeasuredData(config_dict)
     md.initialize()
@@ -14,38 +14,41 @@ def preprocess(config_dict, problem_path):
     md.plot_all_data()
     md.plot_interp_data()
 
-    boreholes = config_dict["mcmc_observe_point"]
+    conf_bayes = config_dict["surrDAMH_parameters"]
+
+    boreholes = conf_bayes["observe_points"]
     times, values = md.generate_measured_samples(boreholes)
 
-    with open(problem_path) as f:
-        text = f.read()
-  
-    Y = yaml.YAML()
-    conf = Y.load(text)
+    config_bayes_file = config_dict["bayes_config_file"]
+    yaml_handler = yaml.YAML()
+    with open(config_bayes_file) as f:
+        file_content = f.read()
+    conf = yaml_handler.load(file_content)
+    # print(conf.ca)
+
     conf["problem_parameters"]["observations"] = np.array(values).tolist()
     conf["no_observations"] = len(values)
     conf["noise_type"] = "Gaussian_process"
     conf["noise_grid"] = np.array(times).tolist()
     conf["noise_parameters"] = [[30, 50]] * len(boreholes)
     conf["solver_module_path"] = os.path.join(config_dict["script_dir"], "flow_wrapper.py")
+    conf["transformations"] = conf_bayes["parameters"]
 
-    with open(problem_path, 'w') as f:
-        Y.dump(conf, f)
+    with open(config_bayes_file, 'w') as f:
+        yaml_handler.dump(conf, f)
 
     # TODO: move the mesh preparation here
 
 
 if __name__ == "__main__":
 
-    problem_path = None
+    output_dir = None
     len_argv = len(sys.argv)
-    assert len_argv > 1, "Specify configuration json file!"
+    assert len_argv > 1, "Specify output directory!"
     if len_argv > 1:
-        problem_path = sys.argv[1]
-    if len_argv > 2:
-        output_dir = sys.argv[2]
+        output_dir = sys.argv[1]
 
     config_dict = flow_wrapper.setup_config()
-    preprocess(config_dict, problem_path)
+    preprocess(config_dict)
 
 

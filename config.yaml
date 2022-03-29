@@ -19,12 +19,6 @@ make_plots: False
 
 clean_sample_dir: True
 
-copy_files: [config.yaml, config_mcmc_bayes.yaml, flow123d_simulation.py,
-#             A01_hm_tmpl.yaml,
-             A02_hm_tmpl.yaml,
-#             B02ustaleni_hm_tmpl.yaml,
-#              B02long_hm_tmpl.yaml,
-              tunnel_mesh_cut_healed.msh]
 
 # The flow executable and arguments to use.
 local:
@@ -68,20 +62,34 @@ output_times: &output_times
   - {begin: 18, step: 5, end: *end_time}
 
 
-# KEEP THE ORDER SAME AS IN MCMC CONFIG!
-mcmc_parameters:
-  - bulk_conductivity
-  - storativity
-#  - biot_coefficient
-  - young_modulus
-#  - poisson_ratio
-  - init_stress_x
-
-mcmc_observe_point:
-  - HGT1-5
-  - HGT1-4
-  - HGT2-4
-  - HGT2-3
+surrDAMH_parameters:
+  config_file: &config_bayes config_mcmc_bayes.yaml
+  parameters:
+    - name: bulk_conductivity
+      type: normal_to_lognormal
+      options:
+        mu: -32.747
+        sigma: 1.0
+    - name: storativity
+      type: normal_to_lognormal
+      options:
+        mu: -17.391
+        sigma: 1.0
+    - name: young_modulus
+      type: normal_to_lognormal
+      options:
+        mu: 26.0
+        sigma: 1.2
+    - name: init_stress_x
+      type: normal_to_lognormal
+      options:
+        mu: 18.6
+        sigma: 1.2
+  observe_points:
+    - HGT1-5
+    - HGT1-4
+    - HGT2-4
+    - HGT2-3
 
 geometry:
   # depth of the center of the box and of the coordinate system
@@ -131,3 +139,10 @@ hm_params:
 
     flow_solver__options: -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg #-ksp_monitor
         # -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg  -pc_hypre_boomeramg_coarsen_type HMIS -pc_hypre_boomeramg_strong_threshold 0.5  -ksp_monitor
+
+copy_files: [config.yaml, *config_bayes, config_mcmc_bayes.yaml, flow123d_simulation.py,
+#             A01_hm_tmpl.yaml,
+             A02_hm_tmpl.yaml,
+#             B02ustaleni_hm_tmpl.yaml,
+#              B02long_hm_tmpl.yaml,
+              tunnel_mesh_cut_healed.msh]

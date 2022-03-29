@@ -13,18 +13,11 @@ debug: false # print debug messages (true/false)
 # internally, normal distribution is used
 # if the prior distribution is not normal, transformations have to be specified
 transformations:
-- - normal_to_lognormal
-  - mu: -32.747
-    sigma: 1.0
-- - normal_to_lognormal
-  - mu: -17.391
-    sigma: 1.0
-- - normal_to_lognormal
-  - mu: 26.0
-    sigma: 1.2
-- - normal_to_lognormal
-  - mu: 18.6
-    sigma: 1.2
+- name: par1
+  type: normal_to_lognormal
+  options:
+    mu: 1
+    sigma: 0.1
 
 
 # SAMPLING PROCESS SETTINGS:
@@ -37,7 +30,7 @@ samplers_list: # stages of the sampling process (here MH, DAMH-SMU, DAMH)
   proposal_std: 0.2
   max_samples: 10000
   time_limit: 180
-
+  
 # stage 2: DAMH algorithm with surrogate model updates
 - type: DAMH
   surrogate_is_updated: true
@@ -51,7 +44,7 @@ samplers_list: # stages of the sampling process (here MH, DAMH-SMU, DAMH)
   proposal_std: 0.6
   max_samples: 10000
   time_limit: 720
-
+  
 
 # SOLVER SETTINGS (here Flow123d wrapper):
 no_solvers: 20 # number of solvers running in parallel
@@ -77,12 +70,14 @@ surr_updater_parameters:
 # instead of problem_parameters["noise_std"], noise_type + noise_parameters + noise_grid is specified
 noise_type: Gaussian_process
 noise_parameters:
-- &id001
-  - 30
+- - 30
   - 50
-- *id001
-- *id001
-- *id001
+- - 30
+  - 50
+- - 30
+  - 50
+- - 30
+  - 50
 noise_grid: # WILL BE SET AUTOMATICALLY
 - 0.0
 - 10.0

@@ -47,12 +47,13 @@ class endorse_2Dtest():
         self.sample_counter = -1
 
     def set_parameters(self, data_par):
-        param_list = self._config["mcmc_parameters"]
+        param_list = self._config["surrDAMH_parameters"]["parameters"]
         assert(len(data_par) == len(param_list))
 
         for idx, param in enumerate(param_list):
-            assert(param in self._config["hm_params"])
-            self._config["hm_params"][param] = data_par[idx]
+            pname = param["name"]
+            assert(pname in self._config["hm_params"])
+            self._config["hm_params"][pname] = data_par[idx]
 
     def get_observations(self):
         try:

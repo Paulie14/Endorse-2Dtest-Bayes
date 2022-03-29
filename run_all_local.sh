@@ -4,26 +4,24 @@ set -x
 # set running on metacentrum to False
 sed -i '/run_on_metacentrum:/c\run_on_metacentrum: False' config.yaml
 
-# MCMC Bayes configuration file
-problem_path=$(realpath $1)
 # number of Markov chains
-n_chains=$2
+n_chains=$1
 # output directory
-output_dir=$3
+output_dir=$2
 
 # command
 run=false
 visualize=false
-if [ "$4" == "visualize" ]; then
+if [ "$3" == "visualize" ]; then
   visualize=true
-elif [ "$4" == "run" ]; then
+elif [ "$3" == "run" ]; then
   run=true
 fi
 
 # sing == true => use singularity
 # sing == false => use docker
 sing=false
-if [ "$5" == "sing" ]; then
+if [ "$4" == "sing" ]; then
   sing=true
 fi
 
