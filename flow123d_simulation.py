@@ -153,7 +153,7 @@ class endorse_2Dtest():
 
     def collect_results(self, config_dict):
         output_dir = config_dict["hm_params"]["output_dir"]
-        points2collect = config_dict["mcmc_observe_point"]
+        points2collect = config_dict["surrDAMH_parameters"]["observe_points"]
 
         # the times defined in input
         times = np.array(generate_time_axis(config_dict))
