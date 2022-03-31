@@ -12,11 +12,13 @@ class MeasuredData:
         self.measured_data = {}
         self.borehole_names = []
         self.interp_data = {}
+        self.zm_data = {}
         self.temp_color = {}
         self._config = config
 
     def initialize(self):
         self.borehole_names, self.measured_data = self.read_chandler_data()
+        zm_bnames, self.zm_data = self.read_zm_data()
 
         for bname in self.borehole_names:
             t = self.measured_data[bname]["time"]
@@ -94,8 +96,11 @@ class MeasuredData:
             p_interp = self.interp_data[bname](t)
             end_idx = idx + len(t)
             p_comp = computed_data[idx:end_idx]
+            zm_t = self.zm_data[bname]["time"]
+            zm_p = self.zm_data[bname]["pressure"]
             ax1.plot(t, p_interp, color=self.temp_color[bname], label=bname, linestyle='dotted')
             ax1.plot(t, p_comp, color=self.temp_color[bname], label=bname, linestyle='solid')
+            ax1.plot(zm_t, zm_p, color="gray", label=bname, linestyle='dotted')
             idx = idx + len(t)
 
         ax1.tick_params(axis='y')
@@ -177,6 +182,16 @@ class MeasuredData:
             # transform pressure from [kPa] to pressure head [m]
             # 1 kPa = [/rho/g] = 0.1 m
             dat["pressure"] = v[permutation][start_idx:] / 10
+        return borehole_names, data
+
+    def read_zm_data(self):
+        # read ZM data
+        datafile = os.path.join(self._config["script_dir"], "measured_data", "ZM_pressure.csv")
+        borehole_names, data = self.read_csv_graph_data(datafile)
+        # sorting and cropping data
+        for bname, dat in data.items():
+            v = np.array(dat["pressure"])
+            dat["pressure"] = v * 100
         return borehole_names, data
 
     def plot_data_set(self, bnames, data, axes, linestyle):
