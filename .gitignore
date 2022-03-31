@@ -127,3 +127,16 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+/.idea/
+
+
+# simulation output
+/flow123d_sim*
+
+# Pavel Exner auxiliary folders
+/DOC/
+/comsol/
+/odSimci/
+/singularity_tryout
+/PROBLEMS/
