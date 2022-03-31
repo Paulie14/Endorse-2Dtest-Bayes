@@ -68,10 +68,10 @@ problem: !Coupling_Sequential
           file: flow.pvd
           format: !vtk
           observe_points: &observe_points
-            - { name: HGT1-5, point: [ 0, 5.0, 0 ] }  # HGT1-5: 3.5 + 1.5
-            - { name: HGT1-4, point: [ 0, 7.5, 0 ] }  # HGT1-4: 3.5 + 4
-            - { name: HGT2-4, point: [ 5.875, 0, 0 ] }  # HGT2-4: 4.375 + 1.5
-            - { name: HGT2-3, point: [ 8.375, 0, 0 ] }  # HGT2-3: 4.375 + 4
+            - { name: HGT1-5, point: [ 0, 3.25, 0 ] }  # HGT1-5: 3.5/2 + 1.5
+            - { name: HGT1-4, point: [ 0, 5.75, 0 ] }  # HGT1-4: 3.5/2 + 4
+            - { name: HGT2-4, point: [ 3.6875, 0, 0 ] }  # HGT2-4: 4.375/2 + 1.5
+            - { name: HGT2-3, point: [ 6.1875, 0, 0 ] }  # HGT2-3: 4.375/2 + 4
     mechanics_equation:
         output_stream:
           file: mechanics.pvd
@@ -110,14 +110,3 @@ problem: !Coupling_Sequential
             time: <bored_time>
             bc_type: stress
             bc_stress: [ -<init_stress_x>, -11e6, 0] # 1d=86400s
-
-#          - region: .tunnel
-#            time: 0
-#            bc_type: traction
-#            bc_traction: !FieldFormula
-#              value: [ -45e6*(1/(<bored_time>*86400)*t)*x / sqrt(x*x + (4.375/3.5)^4*y*y), -11e6*(1/(<bored_time>*86400)*t)*y / sqrt((3.5/4.375)^4*x*x + y*y), 0 ] # 1d=86400s
-#          - region: .tunnel
-#            time: <bored_time>
-#            bc_type: traction
-#            bc_traction: !FieldFormula
-#              value: [ -45e6*x / sqrt(x*x + (4.375/3.5)^4*y*y), -11e6*y / sqrt((3.5/4.375)^4*x*x + y*y), 0 ] # 1d=86400s

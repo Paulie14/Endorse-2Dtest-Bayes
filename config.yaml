@@ -47,19 +47,21 @@ local:
     - /home/paulie/Workspace/Endorse-2Dtest-Bayes/venv/bin/gmsh
 
 # FULL time axis
-#start_time: &start_time 0
-#end_time: &end_time 365
-#output_times: &output_times
-#  - {begin: *start_time, step: 10, end: 18}
-#  - {begin: 18, step: 10, end: 100}
-#  - {begin: 100, step: 20, end: *end_time}
+start_time: &start_time 0
+end_time: &end_time 365
+bored_time: &bored_time 17
+output_times: &output_times
+  - {begin: *start_time, step: 10, end: *bored_time}
+  - {begin: *bored_time, step: 10, end: 100}
+  - {begin: 100, step: 20, end: *end_time}
 
 # SHORT TESTING time axis
-start_time: &start_time 0
-end_time: &end_time 30
-output_times: &output_times
-  - {begin: *start_time, step: 10, end: 18}
-  - {begin: 18, step: 5, end: *end_time}
+#start_time: &start_time 0
+#end_time: &end_time 30
+#bored_time: &bored_time 17
+#output_times: &output_times
+#  - {begin: *start_time, step: 10, end: *bored_time}
+#  - {begin: *bored_time, step: 5, end: *end_time}
 
 
 surrDAMH_parameters:
@@ -98,7 +100,7 @@ geometry:
   # tunnel center
   tunnel_center: [0, 0, 0]
   tunnel_dimX: &tunnel_dimX 4.375 # X cross-section
-  tunnel_dimY: &tunnel_dimY 3.5 # X cross-section
+  tunnel_dimY: &tunnel_dimY 3.5 # Y cross-section
   tunnel_mesh_step: 0.5
 
 # base of the mesh file name
@@ -115,15 +117,17 @@ hm_params:
     output_times: *output_times
     start_time: *start_time
     end_time: *end_time
-    bored_time: 18
+    bored_time: *bored_time
 
     tunnel_dimX: *tunnel_dimX
     tunnel_dimY: *tunnel_dimY
 
 # physical parameters of main interest:
-    biot_coefficient: 0.2     # 0.17
-    storativity: 2.8e-8       #3.28e-7 # S = rho * g * (beta_s + nu * beta_w)
-    bulk_conductivity: 6e-15  # K = k * rho * g /mu, permeability k=6e-22 m2, dyn. viscosity mu=0.001 Pa.s
+    biot_coefficient: 0.2
+    # porosity nu=0.007, beta_w=4e-10 Pa-1, beta_s = (biot-nu)*(1-biot)/bulk_modulus
+    storativity: 7.290792E-08  # S = rho * g * (beta_s + nu * beta_w)
+    # permeability k=6e-22 m2, dyn. viscosity mu=0.001 Pa.s, g=9.81 m.s-2
+    bulk_conductivity: 5.886E-15  # K = k * rho * g /mu
     young_modulus: 60e9
     poisson_ratio: 0.2
     init_stress_x: 45e6
