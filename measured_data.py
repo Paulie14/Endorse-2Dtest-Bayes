@@ -92,19 +92,29 @@ class MeasuredData:
         t = generate_time_axis(self._config)
 
         idx = 0
+        label_comsol="comsol"
         for bname in boreholes:
             p_interp = self.interp_data[bname](t)
             end_idx = idx + len(t)
             p_comp = computed_data[idx:end_idx]
             zm_t = self.zm_data[bname]["time"]
             zm_p = self.zm_data[bname]["pressure"]
-            ax1.plot(t, p_interp, color=self.temp_color[bname], label=bname, linestyle='dotted')
-            ax1.plot(t, p_comp, color=self.temp_color[bname], label=bname, linestyle='solid')
-            ax1.plot(zm_t, zm_p, color="gray", label=bname, linestyle='dotted')
+            ax1.plot(t, p_interp, color=self.temp_color[bname], label="d:"+bname, linestyle='dotted')
+            ax1.plot(t, p_comp, color=self.temp_color[bname], label="m:"+bname, linestyle='solid')
+            if label_comsol == "_no_legend_":
+                ax1.plot(zm_t, zm_p, color="white", label=" ", linestyle='dotted')
+            ax1.plot(zm_t, zm_p, color="gray", label=label_comsol, linestyle='dotted')
+            label_comsol = "_no_legend_" # this will remove duplicates
             idx = idx + len(t)
 
+        # sorting legend handles and labels
+        import operator
+        handles, labels = ax1.get_legend_handles_labels()
+        hl = sorted(zip(handles, labels), key=operator.itemgetter(1), reverse=True)
+        handles2, labels2 = zip(*hl)
+
         ax1.tick_params(axis='y')
-        ax1.legend(ncol=3)
+        ax1.legend(handles2, labels2, ncol=3)
 
         fig.tight_layout()
         # plt.show()
