@@ -17,6 +17,8 @@ import traceback
 # from bgem.gmsh import heal_mesh
 
 import matplotlib.pyplot as plt
+import scipy.integrate
+
 import aux_functions
 
 
@@ -660,3 +662,11 @@ class endorse_2Dtest():
             fig.tight_layout()  # otherwise the right y-label is slightly clipped
             # plt.show()
             plt.savefig("observe_pressure.pdf")
+
+    def smooth_ode(times, values):
+        def ode_func(t, y):
+            return y + 1/t
+        tspan = [times[0], times[-1]]
+        y0 = values[0]
+        scipy.integrate.solve_ivp(ode_func, times, y0)
+

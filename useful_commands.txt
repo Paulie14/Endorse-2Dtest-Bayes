@@ -7,7 +7,7 @@ run Flow123d directly:
 > ./endorse_fterm run input.yaml
 
 open container through singularity:
-> singularity shell -B ../../workspace/:/../../workspace docker://flow123d/ci-gnu:master_2815a84fd
+> singularity shell -B ../../workspace/:/../../workspace docker://flow123d/geomop:master_8c1b58980
 > singularity shell -B ../../workspace/:/../../workspace docker://flow123d/geomop-base-gnu:3.1.0
 > singularity shell -B ../../workspace/:/../../workspace docker://flow123d/flow-dev-gnu-rel:3.1.0
 
@@ -15,6 +15,11 @@ activate virtual environment
 > source venv/bin/activate
 
 run the process:
-> python3 process.py /home/paulie/Workspace/Endorse-2Dtest-Bayes//config_mcmc_bayes.json 2 oversubscribe
-> python3 process.py /auto/liberec3-tul/home/pavel_exner/workspace/Endorse-2Dtest-Bayes/config_mcmc_bayes.json 2
+> python3 run_all.py /home/paulie/Workspace/Endorse-2Dtest-Bayes//config_mcmc_bayes.json 2 oversubscribe
+> python3 run_all.py /auto/liberec3-tul/home/pavel_exner/workspace/Endorse-2Dtest-Bayes/config_mcmc_bayes.json 2
+
+
+mounting
+> sshfs -o IdentityFile=/home/paulie/.ssh/id_ed25519 pavel_exner@charon.nti.tul.cz:/home/pavel_exner /home/paulie/mount/charon_pe
+> sudo sshfs -o allow_other,default_permissions,IdentityFile=/home/paulie/.ssh/id_ed25519 pavel_exner@charon.nti.tul.cz:/home/pavel_exner /mnt/charon_pe
 
