@@ -11,7 +11,7 @@ from surrDAMH.surrDAMH.configuration import Configuration
 # this script is supposed to be dependent only on python packages present on any machine
 # all other python scripts are later run inside docker container
 
-def setup(output_dir):
+def setup(output_dir, can_overwrite):
     # create and cd workdir
     rep_dir = os.path.dirname(os.path.abspath(__file__))
     work_dir = os.path.abspath(output_dir)
@@ -27,19 +27,19 @@ def setup(output_dir):
     config_dict["work_dir"] = work_dir
     config_dict["script_dir"] = rep_dir
 
-    clean = config_dict["clean_sample_dir"]
-
     # Files in the directory are used by each simulation at that level
     common_files_dir = os.path.join(work_dir, "common_files")
-    aux_functions.force_mkdir(common_files_dir, force=clean)
-    # copy common files
-    for f in config_dict["copy_files"]:
-        filepath = os.path.join(common_files_dir, f)
-        # if not os.path.isfile(filepath):
-        shutil.copyfile(os.path.join(rep_dir, f), filepath)
-
     config_dict["bayes_config_file"] = os.path.join(common_files_dir,
                                                     config_dict["surrDAMH_parameters"]["config_file"])
+
+    if can_overwrite:
+        clean = config_dict["clean_sample_dir"]
+        aux_functions.force_mkdir(common_files_dir, force=clean)
+        # copy common files
+        for f in config_dict["copy_files"]:
+            filepath = os.path.join(common_files_dir, f)
+            # if not os.path.isfile(filepath):
+            shutil.copyfile(os.path.join(rep_dir, f), filepath)
 
     return config_dict
 
@@ -64,7 +64,7 @@ if __name__ == "__main__":
         visualize = sys.argv[3] == "visualize"
 
     # setup paths and directories
-    config_dict = setup(output_dir)
+    config_dict = setup(output_dir, can_overwrite=(not visualize))
     problem_path = config_dict["bayes_config_file"]
 
     # run sampling
@@ -74,16 +74,15 @@ if __name__ == "__main__":
     if visualize:
         # os.error("Visualization not implemented.")
         os.chdir(config_dict["script_dir"])
+        if not os.path.isfile(problem_path):
+            raise Exception("Missing problem configuration '" + problem_path + "'."
+                            + " Call simulation with 'run' command first!")
         C = Configuration(N, problem_path)
         args = [str(N), problem_path, output_dir]
         if os.path.exists("surrDAMH/examples/visualization/" + C.problem_name + ".py"):
             command = "python3 surrDAMH/examples/visualization/" + C.problem_name + ".py " + " ".join(args)
         else:
             command = "python3 surrDAMH/examples/visualization/general_visualization.py " + " ".join(args)
-        # local command call
-        print(command)
-        os.system(command)
-        exit(0)
     else:
         if oversubscribe:
             opt = " --oversubscribe "
@@ -155,7 +154,7 @@ if __name__ == "__main__":
             with open("pbs_job.sh", 'w') as f:
                 f.write('\n'.join(lines))
 
-    preprocess(config_dict)
+        preprocess(config_dict)
 
     # final command call
     if not config_dict["run_on_metacentrum"]:
