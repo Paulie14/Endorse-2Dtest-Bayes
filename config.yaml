@@ -6,6 +6,8 @@
 # if run by run_all*, it is set automatically
 run_on_metacentrum: False
 metacentrum:
+  chunks: 2
+  ncpus_per_chunk: 20 # max 20 cpus per node(chunk)
   walltime: 02:00:00
   memory: 12gb
   queue: charon_2h

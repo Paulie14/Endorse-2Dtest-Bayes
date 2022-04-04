@@ -122,7 +122,7 @@ if __name__ == "__main__":
             lines = [
                 '#!/bin/bash',
                 '#PBS -S /bin/bash',
-                '#PBS -l select=1:ncpus=' + str(N+2) + ':mem=' + met["memory"],
+                '#PBS -l select=' + str(met["chunks"]) + ':ncpus=' + str(met["ncpus_per_chunk"]) + ':mem=' + met["memory"],
                 '#PBS -l walltime=' + met["walltime"],
                 '#PBS -q ' + met["queue"],
                 '#PBS -N ' + met["name"],
