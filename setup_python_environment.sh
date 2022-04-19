@@ -16,6 +16,9 @@ pip install matplotlib scipy ruamel.yaml pandas
 # pip install mpi4py
 # if we want to install our own git submodules
 # pip install -e bgem
+pip install pybind11 # for bih
+pip install attrs # for bgem
+pip install -e bgem
 
 #pip freeze
 deactivate
