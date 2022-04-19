@@ -1,10 +1,12 @@
 import os
 import sys
 import ruamel.yaml as yaml
+import numpy as np
 
 import flow_wrapper
 from measured_data import MeasuredData
-import numpy as np
+from mesh_factory import MeshFactory
+
 
 def preprocess(config_dict):
     # prepare measured data as observations
@@ -42,7 +44,7 @@ def preprocess(config_dict):
     with open(config_bayes_file, 'w') as f:
         yaml_handler.dump(conf, f)
 
-    # TODO: move the mesh preparation here
+    MeshFactory.prepare_mesh(config_dict["geometry"], config_dict["common_files_dir"], cut_tunnel=True)
 
 
 if __name__ == "__main__":

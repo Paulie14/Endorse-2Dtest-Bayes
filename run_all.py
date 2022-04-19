@@ -29,6 +29,7 @@ def setup(output_dir, can_overwrite):
 
     # Files in the directory are used by each simulation at that level
     common_files_dir = os.path.join(work_dir, "common_files")
+    config_dict["common_files_dir"] = common_files_dir
     config_dict["bayes_config_file"] = os.path.join(common_files_dir,
                                                     config_dict["surrDAMH_parameters"]["config_file"])
 

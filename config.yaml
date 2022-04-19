@@ -96,6 +96,8 @@ surrDAMH_parameters:
     - HGT2-3
 
 geometry:
+  # base of the mesh file name
+  mesh_name: tunnel_mesh
   # depth of the center of the box and of the coordinate system
   # x,y,z dimension
   box_dimensions: [100, 100]
@@ -103,10 +105,8 @@ geometry:
   tunnel_center: [0, 0, 0]
   tunnel_dimX: &tunnel_dimX 4.375 # X cross-section
   tunnel_dimY: &tunnel_dimY 3.5 # Y cross-section
-  tunnel_mesh_step: 0.5
-
-# base of the mesh file name
-mesh_name: tunnel_mesh
+  tunnel_mesh_step: 0.5 # 0.125 # 0.5
+  max_elem_size: 10 # 3.7
 
 # parameters substituted into the HM model template
 hm_params:
