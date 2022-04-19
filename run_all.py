@@ -14,7 +14,7 @@ from surrDAMH.surrDAMH.configuration import Configuration
 def setup(output_dir, can_overwrite):
     # create and cd workdir
     rep_dir = os.path.dirname(os.path.abspath(__file__))
-    work_dir = os.path.abspath(output_dir)
+    work_dir = output_dir
 
     # Create working directory if necessary
     os.makedirs(work_dir, mode=0o775, exist_ok=True)
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     len_argv = len(sys.argv)
     assert len_argv > 1, "Specify configuration yaml file!"
     if len_argv > 1:
-        output_dir = sys.argv[1]
+        output_dir = os.path.abspath(sys.argv[1])
     if len_argv > 2:
         N = int(sys.argv[2])  # number of MH/DAMH chains
     if len_argv > 3:
@@ -126,7 +126,8 @@ if __name__ == "__main__":
                 '#PBS -l walltime=' + met["walltime"],
                 '#PBS -q ' + met["queue"],
                 '#PBS -N ' + met["name"],
-                '#PBS -j oe',
+                '#PBS -o ' + os.path.join(output_dir,met["name"] + '.out'),
+                '#PBS -e ' + os.path.join(output_dir,met["name"] + '.err'),
                 '\n',
                 *common_lines,
                 '\n# define surrDaMH processes',
