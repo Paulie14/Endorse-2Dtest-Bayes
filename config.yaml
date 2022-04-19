@@ -69,26 +69,41 @@ output_times: &output_times
 surrDAMH_parameters:
   config_file: &config_bayes config_mcmc_bayes.yaml
   parameters:
-    - name: bulk_conductivity
+    - name: perm_km
       type: normal_to_lognormal
       options:
-        mu: -32.766
-        sigma: 1.0
-    - name: storativity
+        mu: -37.064
+        sigma: 2.0
+    - name: perm_beta
       type: normal_to_lognormal
       options:
-        mu: -16.434
-        sigma: 1.0
-    - name: young_modulus
+        mu: -14.732
+        sigma: 2.0
+    - name: perm_gamma
       type: normal_to_lognormal
       options:
-        mu: 24.817
-        sigma: 1.0
-    - name: init_stress_x
-      type: normal_to_lognormal
-      options:
-        mu: 17.622
-        sigma: 0.5
+        mu: -15.019
+        sigma: 2.0
+#    - name: bulk_conductivity
+#      type: normal_to_lognormal
+#      options:
+#        mu: -32.766
+#        sigma: 1.0
+#    - name: storativity
+#      type: normal_to_lognormal
+#      options:
+#        mu: -16.434
+#        sigma: 1.0
+#    - name: young_modulus
+#      type: normal_to_lognormal
+#      options:
+#        mu: 24.817
+#        sigma: 1.0
+#    - name: init_stress_x
+#      type: normal_to_lognormal
+#      options:
+#        mu: 17.622
+#        sigma: 0.5
   observe_points:
     - HGT1-5
     - HGT1-4
@@ -112,7 +127,8 @@ geometry:
 hm_params:
     mesh: tunnel_mesh.msh # healed mesh is used at the end (programmatically replaced)
 #    in_file: A01_hm
-    in_file: A02_hm
+#    in_file: A02_hm
+    in_file: A03_hm
 #    in_file: B02long_hm
 #    in_file: B02ustaleni_hm
 
@@ -134,6 +150,12 @@ hm_params:
     poisson_ratio: 0.2
     init_stress_x: 45e6
 
+    # non-linear permeability
+    perm_kr: 6e-22
+    perm_km: 8e-17
+    perm_beta: 4e-7
+    perm_gamma: 3e-7
+
 # solver's settings
     mechanics_solver__a_tol: 0
     mechanics_solver__r_tol: 1e-12
@@ -146,9 +168,14 @@ hm_params:
     flow_solver__options: -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg #-ksp_monitor
         # -ksp_type cg -pc_type hypre -pc_hypre_type boomeramg  -pc_hypre_boomeramg_coarsen_type HMIS -pc_hypre_boomeramg_strong_threshold 0.5  -ksp_monitor
 
-copy_files: [config.yaml, *config_bayes, config_mcmc_bayes.yaml, flow123d_simulation.py,
+copy_files:
+  - config.yaml
+  - *config_bayes
+  - config_mcmc_bayes.yaml
+  - flow123d_simulation.py
+  - A03_hm_tmpl.yaml
 #             A01_hm_tmpl.yaml,
-             A02_hm_tmpl.yaml,
+#             A02_hm_tmpl.yaml,
 #             B02ustaleni_hm_tmpl.yaml,
 #              B02long_hm_tmpl.yaml,
-              tunnel_mesh_cut_healed.msh]
+#              tunnel_mesh_cut_healed.msh
