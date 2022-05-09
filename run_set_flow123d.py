@@ -7,6 +7,7 @@ import flow_wrapper
 from measured_data import MeasuredData
 
 from run_all import setup
+from preprocess import preprocess
 
 
 def just_run_flow123d(measured_data, parameters, output_dir, boreholes):
@@ -43,7 +44,9 @@ if __name__ == "__main__":
         csv_data = os.path.abspath(sys.argv[2])
 
     # setup paths and directories
-    config_dict = setup(output_dir)
+    config_dict = setup(output_dir, can_overwrite=True)
+
+    preprocess(config_dict)
 
     # prepare measured data as observations
     md = MeasuredData(config_dict)
