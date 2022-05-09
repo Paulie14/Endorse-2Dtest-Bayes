@@ -194,7 +194,7 @@ By substituting parameters from \tabref{tab:model_01_parameters}, we get
 \begin{figure}[!htb]
     \centering
     \includegraphics[width=0.75\textwidth]{\respath fixed_model/fixed_01/observe_comparison.pdf}
-    \caption{Results of Model 1.}
+    \caption{Results of Model 1 -- observed pressure.}
     \label{fig:model_01_observe_pressure}
 \end{figure}
 
@@ -218,21 +218,39 @@ We consider the same geometry and parameters with the only difference in hydraul
 
 \paragraph{Nonlinear hydraulic conductivity.}
 Empirical nonlinear dependence of hydraulic conductivity on stress:
-\eq{ K = \frac{\rho g}{\mu} \left[k_r + \Delta k_m\exp(\beta\sigma_m)\right]\exp(\gamma\Delta\sigma_{VM}) }
+\eq{ K = \frac{\rho g}{\mu} \left[\mathring{k}_r + \Delta \mathring{k}_m\exp(\mathring\beta\sigma_m)\right]\exp(\mathring\gamma\Delta\sigma_{VM}) }
 where
 \begin{itemize}
+    \item $\mathring k_r=2\cdot10^{-21}\unit{m^2}$ is \emph{residual (irreducible) permeability at high compressive mean stress}
+    and the fitting constants are: $\Delta \mathring{k}_m=8\cdot10^{-17}\unit{m^2}$,  $\mathring\beta=4\cdot10^{-7}\unit{Pa^{-1}}$, $\mathring\gamma=3\cdot10^{-7}\unit{Pa^{-1}}$
     \item the mean of the principal stresses, i.e.
         \eq{\label{eq:mean_stress} \sigma_m:=\frac13\tr\tn\sigma(\uu)}
     \item von Mises stress
         \eq{\label{eq:von_mises} \sigma_{VM}:=\sqrt{\frac32\tn\sigma_d:\tn\sigma_d} 
             = \frac{1}{\sqrt{2}}\sqrt{\sqr{\sigma_1-\sigma_2}+\sqr{\sigma_2-\sigma_3}+\sqr{\sigma_1-\sigma_3}},}
         where $\tn\sigma_d:=\tn\sigma(\uu)-\frac13(\tr\tn\sigma(\uu))\tn I$ is the deviatoric stress;
-    \item $\Delta\sigma_{VM}$ is understood as the difference between the computed $\sigma_{VM}$ and
+    \item $\Delta\sigma_{VM}$ is understood as the \emph{non-negative} difference between the computed $\sigma_{VM}$ and
         \emph{a critical deviatoric stress for onset of shear-induced permeability}, $\sigma_{c}$, by~\cite{rutqvist_fractured_2015}.
         Let us denote
-        \eq{\Delta\sigma_{VM} = \sigma_{VM} - \sigma_{c},}
+        \eq{\Delta\sigma_{VM} = \max\left(0, \sigma_{VM} - \sigma_{c}\right),}
         with $\sigma_{c}=55\,\unit{MPa}$.
 \end{itemize}
+
+\begin{figure}[htb!]
+    \centering
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath fixed_model/fixed_02/observe_comparison.pdf}
+      \caption{Coarse mesh.}
+      \label{fig:mass_mobile_flow123d}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath fixed_model/fixed_03/observe_comparison.pdf}
+      \caption{Fine mesh.}
+      \label{fig:mass_sorbed_flow123d}
+    \end{subfigure}
+    \caption{Results of Model 2 -- observed pressure, nonlinear conductivity.}
+    \label{fig:balance_flow123d}
+\end{figure}
 
 % The geometry is shown in \figref{fig:model_01_geometry} and boundary conditions are depicted.
 % The input parameters of the fixed forward model are gathered in \tabref{tab:model_01_parameters}.
