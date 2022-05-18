@@ -113,8 +113,6 @@ if __name__ == "__main__":
                 'cd "' + config_dict["script_dir"] + '"',
                 '\n# command for running correct docker image',
                 'image=$(./endorse_fterm image)',
-                'sing_command="singularity exec -B ' + met["workspace_rel"] + '/:/' + met["workspace_rel"]
-                        + ' docker://$image"',
                 '\n# auxiliary command for opening Python environment inside docker image',
                 'bash_py="bash -c \'source ./venv/bin/activate &&"',
             ]
@@ -135,19 +133,8 @@ if __name__ == "__main__":
                 'sampler="$bash_py ' + sampler + '\'"',
                 'solver="$bash_py ' + solver + '\'"',
                 'collector="$bash_py ' + collector + '\'"',
-                # '\n',
-                # '# load correct MPI lib',
-                # 'module load mpich-3.0.2-gcc',
-                # 'which mpirun',
-                # 'mpirun --version',
-                '\n# get hostfile and pass into container mpiexec',
-                'local_host_file="$output_dir/hostfile_$PBS_JOBID"',
-                'cp $PBS_NODEFILE $local_host_file',
                 '\n# finally gather the full command',
-                'command="$sing_command mpiexec '
-                        + '-f $local_host_file '
-                        + '-launcher-exec \'$sing_command mpiexec\' '
-                        + '-envnone '
+                'command="python3 singularity_exec_mpi.py -i $image -- '
                         + '-n ' + str(N) + ' $sampler : '
                         + '-n 1 $solver : '
                         + '-n 1 $collector"',
