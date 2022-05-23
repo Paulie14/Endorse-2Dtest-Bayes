@@ -89,9 +89,9 @@ if __name__ == "__main__":
             opt = " --oversubscribe "
         else:
             opt = " "
-        sampler = "python3 -m mpi4py surrDAMH/surrDAMH/process_SAMPLER.py " + output_dir + " "
-        solver = "python3 -m mpi4py surrDAMH/surrDAMH/process_SOLVER.py " + problem_path + " " + output_dir + " "
-        collector = "python3 -m mpi4py surrDAMH/surrDAMH/process_COLLECTOR.py "
+        sampler = "python3 -m mpi4py surrDAMH/surrDAMH/process_SAMPLER.py " + output_dir
+        solver = "python3 -m mpi4py surrDAMH/surrDAMH/process_SOLVER.py " + problem_path + " " + output_dir
+        collector = "python3 -m mpi4py surrDAMH/surrDAMH/process_COLLECTOR.py"
 
         # prepare running command for local run
         # or prepare PBS script for running on Metacentrum
@@ -102,8 +102,15 @@ if __name__ == "__main__":
             # mpirun = "mpiexec -envnone"
             mpirun = "mpiexec"
             command = mpirun + " -n " + str(N) + opt + sampler \
-                      + ":" + " -n 1" + opt + solver + ":" + " -n 1" + opt + collector
+                      + " : " + "-n 1" + opt + solver + " : " + "-n 1" + opt + collector
         else:
+            with open("sampler.sh", 'w') as f:
+                f.write('\n'.join(['source ./venv/bin/activate', sampler]))
+            with open("solver.sh", 'w') as f:
+                f.write('\n'.join(['source ./venv/bin/activate', solver]))
+            with open("collector.sh", 'w') as f:
+                f.write('\n'.join(['source ./venv/bin/activate', collector]))
+
             met = config_dict["metacentrum"]
             common_lines = [
                 'set -x',
@@ -112,9 +119,7 @@ if __name__ == "__main__":
                 '\n# run from the repository directory',
                 'cd "' + config_dict["script_dir"] + '"',
                 '\n# command for running correct docker image',
-                'image=$(./endorse_fterm image)',
-                '\n# auxiliary command for opening Python environment inside docker image',
-                'bash_py="bash -c \'source ./venv/bin/activate &&"',
+                'image=$(./endorse_fterm image)'
             ]
 
             # prepare PBS script
@@ -128,15 +133,11 @@ if __name__ == "__main__":
                 '#PBS -j oe',
                 '\n',
                 *common_lines,
-                '\n# define surrDaMH processes',
-                'sampler="$bash_py ' + sampler + '\'"',
-                'solver="$bash_py ' + solver + '\'"',
-                'collector="$bash_py ' + collector + '\'"',
                 '\n# finally gather the full command',
                 'command="python3 singularity_exec_mpi.py -i $image -- '
-                        + '-n ' + str(N) + ' $sampler : '
-                        + '-n 1 $solver : '
-                        + '-n 1 $collector"',
+                        + '-n ' + str(N) + ' sampler.sh : '
+                        + '-n 1 solver.sh : '
+                        + '-n 1 collector.sh"',
                 '\n', 'echo $command', 'eval $command'
             ]
             with open("pbs_job.sh", 'w') as f:
