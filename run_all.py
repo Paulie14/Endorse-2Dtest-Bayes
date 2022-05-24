@@ -44,6 +44,13 @@ def setup(output_dir, can_overwrite):
 
     return config_dict
 
+def create_bash_python_script(filename, command):
+    with open(filename, 'w') as f:
+        f.write('\n'.join(['source ./venv/bin/activate', command]))
+
+    abs_filename = os.path.abspath(filename)
+    os.popen('chmod +x ' + abs_filename)
+    return abs_filename
 
 if __name__ == "__main__":
 
@@ -104,12 +111,9 @@ if __name__ == "__main__":
             command = mpirun + " -n " + str(N) + opt + sampler \
                       + " : " + "-n 1" + opt + solver + " : " + "-n 1" + opt + collector
         else:
-            with open("sampler.sh", 'w') as f:
-                f.write('\n'.join(['source ./venv/bin/activate', sampler]))
-            with open("solver.sh", 'w') as f:
-                f.write('\n'.join(['source ./venv/bin/activate', solver]))
-            with open("collector.sh", 'w') as f:
-                f.write('\n'.join(['source ./venv/bin/activate', collector]))
+            sampler_bash = create_bash_python_script("sampler.sh", sampler)
+            solver_bash = create_bash_python_script("solver.sh", solver)
+            collector_bash = create_bash_python_script("collector.sh", collector)
 
             met = config_dict["metacentrum"]
             common_lines = [
@@ -119,7 +123,7 @@ if __name__ == "__main__":
                 '\n# run from the repository directory',
                 'cd "' + config_dict["script_dir"] + '"',
                 '\n# command for running correct docker image',
-                'image=$(./endorse_fterm image)'
+                'image="docker://$(./endorse_fterm image)"'
             ]
 
             # prepare PBS script
@@ -136,10 +140,11 @@ if __name__ == "__main__":
                 *common_lines,
                 '\n# finally gather the full command',
                 'command="python3 singularity_exec_mpi.py -i $image -- '
-                        + '-n ' + str(N) + ' sampler.sh : '
-                        + '-n 1 solver.sh : '
-                        + '-n 1 collector.sh"',
-                '\n', 'echo $command', 'eval $command'
+                        + ' '.join(['-n',str(N),sampler_bash,':',
+                                    '-n',str(1),solver_bash,':',
+                                    '-n',str(1),collector_bash]) + '"',
+                '\n',
+                'echo $command', 'eval $command'
             ]
             with open("pbs_job.sh", 'w') as f:
                 f.write('\n'.join(lines))
