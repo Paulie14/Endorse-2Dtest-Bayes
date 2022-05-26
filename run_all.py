@@ -123,7 +123,9 @@ if __name__ == "__main__":
                 '\n# run from the repository directory',
                 'cd "' + config_dict["script_dir"] + '"',
                 '\n# command for running correct docker image',
-                'image="docker://$(./endorse_fterm image)"'
+                'image_name="$(./endorse_fterm image)"',
+                '\n',
+                'image=$( echo "$image_name.sif" | tr /: _ )'
             ]
 
             # prepare PBS script
