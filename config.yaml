@@ -48,6 +48,8 @@ local:
   gmsh_executable:
     - /home/paulie/Workspace/Endorse-2Dtest-Bayes/venv/bin/gmsh
 
+# smooth_factor: 5e-6
+
 # FULL time axis
 start_time: &start_time 0
 end_time: &end_time 365
