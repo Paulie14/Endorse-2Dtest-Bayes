@@ -14,7 +14,7 @@ from surrDAMH.surrDAMH.configuration import Configuration
 def setup(output_dir, can_overwrite):
     # create and cd workdir
     rep_dir = os.path.dirname(os.path.abspath(__file__))
-    work_dir = os.path.abspath(output_dir)
+    work_dir = output_dir
 
     # Create working directory if necessary
     os.makedirs(work_dir, mode=0o775, exist_ok=True)
@@ -44,6 +44,13 @@ def setup(output_dir, can_overwrite):
 
     return config_dict
 
+def create_bash_python_script(filename, command):
+    with open(filename, 'w') as f:
+        f.write('\n'.join(['source ./venv/bin/activate', command]))
+
+    abs_filename = os.path.abspath(filename)
+    os.popen('chmod +x ' + abs_filename)
+    return abs_filename
 
 if __name__ == "__main__":
 
@@ -57,7 +64,7 @@ if __name__ == "__main__":
     len_argv = len(sys.argv)
     assert len_argv > 1, "Specify configuration yaml file!"
     if len_argv > 1:
-        output_dir = sys.argv[1]
+        output_dir = os.path.abspath(sys.argv[1])
     if len_argv > 2:
         N = int(sys.argv[2])  # number of MH/DAMH chains
     if len_argv > 3:
@@ -104,12 +111,9 @@ if __name__ == "__main__":
             command = mpirun + " -n " + str(N) + opt + sampler \
                       + " : " + "-n 1" + opt + solver + " : " + "-n 1" + opt + collector
         else:
-            with open("sampler.sh", 'w') as f:
-                f.write('\n'.join(['source ./venv/bin/activate', sampler]))
-            with open("solver.sh", 'w') as f:
-                f.write('\n'.join(['source ./venv/bin/activate', solver]))
-            with open("collector.sh", 'w') as f:
-                f.write('\n'.join(['source ./venv/bin/activate', collector]))
+            sampler_bash = create_bash_python_script("sampler.sh", sampler)
+            solver_bash = create_bash_python_script("solver.sh", solver)
+            collector_bash = create_bash_python_script("collector.sh", collector)
 
             met = config_dict["metacentrum"]
             common_lines = [
@@ -119,7 +123,7 @@ if __name__ == "__main__":
                 '\n# run from the repository directory',
                 'cd "' + config_dict["script_dir"] + '"',
                 '\n# command for running correct docker image',
-                'image=$(./endorse_fterm image)'
+                'image="docker://$(./endorse_fterm image)"'
             ]
 
             # prepare PBS script
@@ -130,15 +134,17 @@ if __name__ == "__main__":
                 '#PBS -l walltime=' + met["walltime"],
                 '#PBS -q ' + met["queue"],
                 '#PBS -N ' + met["name"],
-                '#PBS -j oe',
+                '#PBS -o ' + os.path.join(output_dir,met["name"] + '.out'),
+                '#PBS -e ' + os.path.join(output_dir,met["name"] + '.err'),
                 '\n',
                 *common_lines,
                 '\n# finally gather the full command',
                 'command="python3 singularity_exec_mpi.py -i $image -- '
-                        + '-n ' + str(N) + ' sampler.sh : '
-                        + '-n 1 solver.sh : '
-                        + '-n 1 collector.sh"',
-                '\n', 'echo $command', 'eval $command'
+                        + ' '.join(['-n',str(N),sampler_bash,':',
+                                    '-n',str(1),solver_bash,':',
+                                    '-n',str(1),collector_bash]) + '"',
+                '\n',
+                'echo $command', 'eval $command'
             ]
             with open("pbs_job.sh", 'w') as f:
                 f.write('\n'.join(lines))
