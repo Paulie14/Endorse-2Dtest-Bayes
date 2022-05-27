@@ -13,6 +13,7 @@ import traceback
 
 import matplotlib.pyplot as plt
 import scipy.integrate
+import scipy.interpolate
 
 import aux_functions
 
@@ -132,7 +133,6 @@ class endorse_2Dtest():
             traceback.print_exc()
             return -3, []
 
-
     # def check_data(self, data, minimum, maximum):
     #     n_times = len(endorse_2Dtest.result_format()[0].times)
     #     if len(data) != n_times:
@@ -178,6 +178,11 @@ class endorse_2Dtest():
             # skip the times not specified in input
             t_indices = np.isin(obs_times, times).nonzero()
             values = values[t_indices].transpose()
+
+            if "smooth_factor" in config_dict.keys():
+                smooth_factor = config_dict["smooth_factor"]
+                for i in range(len(values)):
+                    values[i] = self.smooth_ode(times, values[i], smooth_factor)
 
         if config_dict["clean_sample_dir"]:
             shutil.rmtree(self.sample_dir)
@@ -457,10 +462,18 @@ class endorse_2Dtest():
             # plt.show()
             plt.savefig("observe_pressure.pdf")
 
-    def smooth_ode(times, values):
-        def ode_func(t, y):
-            return y + 1/t
+    def smooth_ode(self, times, values, smooth_factor):
+
+        pw = scipy.interpolate.CubicSpline(times, values, bc_type='natural')
+
+        p0 = [values[0]]
         tspan = [times[0], times[-1]]
-        y0 = values[0]
-        scipy.integrate.solve_ivp(ode_func, times, y0)
+
+        def ode_func(t, y):
+            V0 = np.pi*0.0025*1
+            s = y*y/p0/V0
+            return y*y/V0/p0 * smooth_factor * (pw(t)-y)
+
+        sol = scipy.integrate.solve_ivp(fun=ode_func, t_span=tspan, y0=p0, t_eval=times)
+        return sol.y
 
