@@ -466,14 +466,13 @@ class endorse_2Dtest():
 
         pw = scipy.interpolate.CubicSpline(times, values, bc_type='natural')
 
-        p0 = [values[0]]
+        p0 = values[0]
         tspan = [times[0], times[-1]]
 
+        p0V0 = np.pi * 0.0025 * 1 * p0
         def ode_func(t, y):
-            V0 = np.pi*0.0025*1
-            s = y*y/p0/V0
-            return y*y/V0/p0 * smooth_factor * (pw(t)-y)
+            return y*y/p0V0 * smooth_factor * (pw(t)-y)
 
-        sol = scipy.integrate.solve_ivp(fun=ode_func, t_span=tspan, y0=p0, t_eval=times)
+        sol = scipy.integrate.solve_ivp(fun=ode_func, t_span=tspan, y0=[p0], t_eval=times)
         return sol.y
 
