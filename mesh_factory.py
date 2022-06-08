@@ -65,14 +65,21 @@ class MeshFactory:
 
         tunnel_disc = factory.disc(tunnel_center, *tunnel_dims)
         tunnel_select = tunnel_disc.copy()
+        tunnel_ngh = factory.disc(tunnel_center, *(5*tunnel_dims))
 
         print("cutting and fragmenting...")
         box_drilled = box.cut(tunnel_disc)
-        box_fr, tunnel_fr = factory.fragment(box_drilled, tunnel_disc)
+        ngh_drilled = tunnel_ngh.cut(tunnel_disc)
+        box_fr, ngh_fr, tunnel_fr = factory.fragment(box_drilled, ngh_drilled, tunnel_disc)
+
+        # b_ngh_fr = ngh_fr.get_boundary()
+        # isec_ngh = ngh_fr.select_by_intersect(b_ngh_fr)
+        # isec_ngh.modify_regions("tunnel_ngh").mesh_step(2*tunnel_mesh_step)
+        # ngh_fr.modify_regions("tunnel_ngh").mesh_step(4 * tunnel_mesh_step)
+        ngh_fr.modify_regions("box").mesh_step(4 * tunnel_mesh_step)
+        box_all = [box_fr, ngh_fr]
 
         print("marking boundary regions...")
-        box_all = []
-
         b_box_fr = box_fr.get_boundary()
         for name, side_tool in sides.items():
             isec = b_box_fr.select_by_intersect(side_tool)
@@ -82,11 +89,11 @@ class MeshFactory:
             b_tunnel_select = tunnel_select.get_boundary()
             b_tunnel = b_box_fr.select_by_intersect(b_tunnel_select)
             b_tunnel.modify_regions(".tunnel").mesh_step(tunnel_mesh_step)
-            box_all.extend([box_fr, b_tunnel])
+            box_all.extend([b_tunnel])
         else:
             tunnel = tunnel_fr.select_by_intersect(tunnel_select)
             tunnel.set_region("tunnel").mesh_step(tunnel_mesh_step)
-            box_all.extend([box_fr, tunnel])
+            box_all.extend([tunnel])
 
         mesh_groups = [*box_all]
 
@@ -102,14 +109,14 @@ class MeshFactory:
         # max_el_size = np.max(dimensions) / 10
 
         mesh = gmsh_options.Mesh()
-        # mesh.Algorithm = options.Algorithm2d.MeshAdapt # produce some degenerated 2d elements on fracture boundaries ??
-        # mesh.Algorithm = options.Algorithm2d.Delaunay
-        # mesh.Algorithm = options.Algorithm2d.FrontalDelaunay
-        # mesh.Algorithm3D = options.Algorithm3d.Frontal
-        # mesh.Algorithm3D = options.Algorithm3d.Delaunay
+        # mesh.Algorithm = gmsh_options.Algorithm2d.MeshAdapt # produce some degenerated 2d elements on fracture boundaries ??
+        mesh.Algorithm = gmsh_options.Algorithm2d.Delaunay
+        # mesh.Algorithm = gmsh_options.Algorithm2d.FrontalDelaunay
+        # mesh.Algorithm3D = gmsh_options.Algorithm3d.Frontal
+        # mesh.Algorithm3D = gmsh_options.Algorithm3d.Delaunay
 
         # mesh.Algorithm = gmsh_options.Algorithm2d.FrontalDelaunay
-        mesh.Algorithm3D = gmsh_options.Algorithm3d.HXT
+        # mesh.Algorithm3D = gmsh_options.Algorithm3d.HXT
 
         mesh.ToleranceInitialDelaunay = 0.01
         # mesh.ToleranceEdgeLength = fracture_mesh_step / 5
