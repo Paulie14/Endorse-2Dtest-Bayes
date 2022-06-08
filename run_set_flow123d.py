@@ -39,7 +39,7 @@ if __name__ == "__main__":
     len_argv = len(sys.argv)
     assert len_argv > 2, "Specify output dir and parameters in csv file!"
     if len_argv > 1:
-        output_dir = sys.argv[1]
+        output_dir = os.path.abspath(sys.argv[1])
     if len_argv > 2:
         csv_data = os.path.abspath(sys.argv[2])
 
