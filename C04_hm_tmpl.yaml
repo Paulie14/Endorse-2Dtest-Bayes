@@ -1,0 +1,145 @@
+flow123d_version: 3.1.0
+problem: !Coupling_Sequential
+  description: Model of tunnel surroundings relaxation after boring.
+  mesh:
+    mesh_file: <mesh>
+    regions:
+      - !Union
+        name: .outer_boundary
+        regions: [.bottom, .top, .left, .right]
+  flow_equation: !Coupling_Iterative
+    input_fields:
+      - region: BULK
+        biot_alpha: <biot_coefficient>
+        fluid_density: 1000
+    time:
+      end_time: [300, 'y']
+      # common time unit cannot be used in field formulas
+      common_time_unit: d
+    iteration_parameter: 10000 # affects convergence of HM coupling (defaults to 1, lower value sometimes helps)
+    a_tol: 0
+    r_tol: 1e-8
+    flow_equation: !Flow_Richards_LMH
+        nonlinear_solver:
+          linear_solver: !Petsc
+            a_tol: <flow_solver__a_tol>
+            r_tol: <flow_solver__r_tol>
+            options: <flow_solver__options>
+        input_fields:
+          - region: BULK
+            conductivity: !FieldFormula
+#              value: <bulk_conductivity>
+              value: if(von_mises_stress<55e6,
+                        1000*9.81/0.001 * (<perm_kr> + <perm_km>*exp(<perm_beta> * mean_stress)),
+                        1000*9.81/0.001 * (<perm_kr> + <perm_km>*exp(<perm_beta> * mean_stress)) * exp(<perm_gamma>*(von_mises_stress-55e6))
+                       )
+
+            # https://en.wikipedia.org/wiki/Specific_storage
+            storativity: <storativity> #2.8e-8 #3.28e-7 # S = rho * g * (beta_s + nu * beta_w)
+            # bulk compressibility beta_s=1/K = (3(1-2pr)/E)
+            # porosity nu=0.007
+            # water compressibility beta_w=0 1/Pa
+            init_pressure: 300
+
+          - region: .outer_boundary
+            bc_type: dirichlet
+            bc_pressure: 300 # 3MPa = p = h*rho*g => h = 300 m
+
+#          - region: .tunnel
+#            bc_type: dirichlet
+#            bc_pressure: !FieldFormula
+#              value: 300
+
+          - region: .tunnel
+            time: 0
+            bc_type: dirichlet
+            bc_pressure: !FieldFormula
+              value: 300*(-1/(<bored_time>*86400)*t + 1) # 1d=86400s
+          - region: .tunnel
+            time: <bored_time>
+            bc_type: dirichlet
+            bc_pressure: 0
+
+          # after consolidation (50 years), fill tunnel with water and bentonite
+          - region: .tunnel
+            time: [50, 'y']
+            bc_type: dirichlet
+            bc_pressure: 300
+
+        output:
+          times: &output_times
+            - { begin: 0, step: 10, end: 17 }
+            - { begin: 17, step: 10, end: 100 }
+            - { begin: 100, step: 20, end: 365 }
+            - { begin: 365, step: 120, end: 3650 }
+            - { begin: 3650, step: [1, 'y'], end: [50, 'y'] }
+            - { begin: [50, 'y'], step: [5, 'y'], end: [300, 'y'] }
+          fields: #[]
+            - { field: conductivity, interpolation: P1_average }
+            - piezo_head_p0
+            - pressure_p0
+            - velocity_p0
+            - region_id
+          observe_fields: [pressure_p0]
+        #balance:
+          #cumulative: true
+        output_stream:
+          file: flow.pvd
+          format: !vtk
+          observe_points: &observe_points
+            - { name: HGT1-5, point: [ 0, 3.25, 0 ] }  # HGT1-5: 3.5/2 + 1.5
+            - { name: HGT1-4, point: [ 0, 5.75, 0 ] }  # HGT1-4: 3.5/2 + 4
+            - { name: HGT2-4, point: [ 3.6875, 0, 0 ] }  # HGT2-4: 4.375/2 + 1.5
+            - { name: HGT2-3, point: [ 6.1875, 0, 0 ] }  # HGT2-3: 4.375/2 + 4
+    mechanics_equation:
+        output_stream:
+          file: mechanics.pvd
+          format: !vtk
+#          observe_points: *observe_points
+        output:
+          times: *output_times
+          fields: #[]
+            - { field: displacement, interpolation: P1_average }
+            - stress
+            - displacement_divergence
+            - mean_stress
+            - von_mises_stress
+            - initial_stress
+            - region_id
+#          observe_fields: [displacement]
+        solver: !Petsc
+          a_tol: <mechanics_solver__a_tol>
+          r_tol: <mechanics_solver__r_tol>
+          options: <mechanics_solver__options>
+        input_fields:
+          - region: BULK
+            young_modulus: !FieldFormula
+              value: ( ( (<young_modulus_1>-<young_modulus>)/25 * (abs(x)-7.1875)**2 + <young_modulus> ) * x**2
+                      +( (<young_modulus_1>-<young_modulus>)/25 * (abs(y)-6.7500)**2 + <young_modulus> ) * y**2) / (x**2 + y**2)
+                     if (x/7.1875)**2 + (y/6.75)**2 <= 1 else <young_modulus>
+            poisson_ratio: <poisson_ratio>
+            initial_stress: [ -<init_stress_x>, -11e6, -60e6]
+
+          - region: .outer_boundary
+            bc_type: displacement
+            bc_displacement: 0
+
+          # bc_type stress prepocita tenzor napeti na normalovou silu, s normalou orientovanou dovnitr
+          # bc_stress * vnitřní normála = bc_traction = síla působící na těleso
+          - region: .tunnel
+            time: 0
+            bc_type: stress
+            bc_stress: !FieldFormula
+              value: [ -<init_stress_x>*(1/(<bored_time>*86400)*t), -11e6*(1/(<bored_time>*86400)*t), 0] # 1d=86400s
+          - region: .tunnel
+            time: <bored_time>
+            bc_type: stress
+            bc_stress: [ -<init_stress_x>, -11e6, 0] # 1d=86400s
+
+          # after consolidation (50 years), fill tunnel with water and bentonite
+          # add 4MPa of water and bentonite pressure
+          - region: .tunnel
+            time: [ 50, 'y' ]
+            bc_type: stress
+            bc_stress: !FieldFormula
+              value: [ -<init_stress_x> +4e6, -11e6 +4e6, 0 ] # 1d=86400s

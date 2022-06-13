@@ -76,7 +76,7 @@ class MeshFactory:
         # isec_ngh = ngh_fr.select_by_intersect(b_ngh_fr)
         # isec_ngh.modify_regions("tunnel_ngh").mesh_step(2*tunnel_mesh_step)
         # ngh_fr.modify_regions("tunnel_ngh").mesh_step(4 * tunnel_mesh_step)
-        ngh_fr.modify_regions("box").mesh_step(4 * tunnel_mesh_step)
+        ngh_fr.modify_regions("box").mesh_step(6 * tunnel_mesh_step)
         box_all = [box_fr, ngh_fr]
 
         print("marking boundary regions...")

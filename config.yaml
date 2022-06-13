@@ -103,15 +103,15 @@ surrDAMH_parameters:
 #        mu: -16.434
 #        sigma: 1.0
     - name: young_modulus
-      type: normal_to_lognormal
+      type: None
       options:
-        mu: 24.817
-        sigma: 1.0
+#        mu: 24.817
+#        sigma: 1.0
     - name: young_modulus_1
-      type: normal_to_lognormal
+      type: None
       options:
-        mu: 24.124
-        sigma: 1.0
+#        mu: 24.124
+#        sigma: 1.0
 
 #    - name: init_stress_x
 #      type: normal_to_lognormal
@@ -144,6 +144,7 @@ hm_params:
 #    in_file: A02_hm
 #    in_file: A03_hm
     in_file: A04_hm
+#    in_file: C04_hm
 #    in_file: B02long_hm
 #    in_file: B02ustaleni_hm
 
@@ -191,6 +192,7 @@ copy_files:
   - flow123d_simulation.py
   - A03_hm_tmpl.yaml
   - A04_hm_tmpl.yaml
+  - C04_hm_tmpl.yaml
 #             A01_hm_tmpl.yaml,
 #             A02_hm_tmpl.yaml,
 #             B02ustaleni_hm_tmpl.yaml,
