@@ -39,6 +39,12 @@ def preprocess(config_dict):
     conf["noise_parameters"] = [[30, 100]] * len(boreholes)
     conf["solver_module_path"] = os.path.join(config_dict["script_dir"], "flow_wrapper.py")
     conf["transformations"] = conf_bayes["parameters"]
+
+    for i, par in enumerate(conf_bayes["parameters"]):
+        if par["type"] is None:
+            conf["problem_parameters"]["prior_mean"][i] = par["options"]["mu"]
+            conf["problem_parameters"]["prior_std"][i] = par["options"]["sigma"]
+
     conf["no_solvers"] = int(np.round(0.5*(config_dict["metacentrum"]["chunks"] * config_dict["metacentrum"]["ncpus_per_chunk"]-2)))
 
     with open(config_bayes_file, 'w') as f:

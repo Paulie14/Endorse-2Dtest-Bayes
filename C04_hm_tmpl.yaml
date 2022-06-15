@@ -71,9 +71,11 @@ problem: !Coupling_Sequential
             - { begin: 0, step: 10, end: 17 }
             - { begin: 17, step: 10, end: 100 }
             - { begin: 100, step: 20, end: 365 }
-            - { begin: 365, step: 120, end: 3650 }
-            - { begin: 3650, step: [1, 'y'], end: [50, 'y'] }
-            - { begin: [50, 'y'], step: [5, 'y'], end: [300, 'y'] }
+            - { begin: 365, step: 120, end: [3,  'y'] }
+            - { begin: [3, 'y'], step: [1, 'y'], end: [10, 'y'] }
+            - { begin: [10, 'y'], step: [2, 'y'], end: [50, 'y'] }
+            - { begin: [50, 'y'], step: [5, 'y'], end: [100, 'y'] }
+            - { begin: [100, 'y'], step: [10, 'y'], end: [300, 'y'] }
           fields: #[]
             - { field: conductivity, interpolation: P1_average }
             - piezo_head_p0
