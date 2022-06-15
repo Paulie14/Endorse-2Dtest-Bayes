@@ -140,10 +140,13 @@ if __name__ == "__main__":
                 *common_lines,
                 '\n# finally gather the full command',
                 'command="python3 singularity_exec_mpi.py -i $image -- '
-                        + ' '.join(['-n',str(N),sampler_bash,':',
-                                    '-n',str(1),solver_bash,':',
-                                    '-n',str(1),collector_bash]) + '"',
-                '\n',
+                        + ' '.join(['-n', str(N),sampler_bash, ':',
+                                    '-n', str(1),solver_bash, ':',
+                                    '-n', str(1),collector_bash]) + '"',
+                'echo $command', 'eval $command', '\n',
+                'command="' + ' '.join(['./run_all_local.sh', str(N), output_dir, 'visualize', 'sing']) + '"',
+                'echo $command', 'eval $command', '\n',
+                'command="' + ' '.join(['./run_set.sh', output_dir, config_dict["run_best_n_accepted"]]) + '"',
                 'echo $command', 'eval $command'
             ]
             with open("pbs_job.sh", 'w') as f:
