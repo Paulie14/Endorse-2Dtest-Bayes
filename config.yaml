@@ -21,6 +21,7 @@ make_plots: False
 
 clean_sample_dir: True
 
+run_best_n_accepted: 30
 
 # The flow executable and arguments to use.
 local:
