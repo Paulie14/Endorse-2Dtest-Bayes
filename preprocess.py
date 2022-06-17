@@ -30,6 +30,7 @@ def preprocess(config_dict):
 
     npar = len(conf_bayes["parameters"])
     conf["no_parameters"] = npar
+    conf["problem_parameters"]["noise_std"] = [100] # * len(values)
     conf["problem_parameters"]["observations"] = np.array(values).tolist()
     conf["problem_parameters"]["prior_mean"] = [0.0] * npar
     conf["problem_parameters"]["prior_std"] = [1.0] * npar

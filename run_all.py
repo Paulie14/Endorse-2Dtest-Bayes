@@ -148,7 +148,7 @@ if __name__ == "__main__":
                 'echo $command', 'eval $command', '\n',
                 'command="' + ' '.join(['./run_all_local.sh', str(N), output_dir, 'visualize', 'sing']) + '"',
                 'echo $command', 'eval $command', '\n',
-                'command="' + ' '.join(['./run_set.sh', output_dir, config_dict["run_best_n_accepted"]]) + '"',
+                'command="' + ' '.join(['./run_set.sh', output_dir, str(config_dict["run_best_n_accepted"]), 'sing']) + '"',
                 'echo $command', 'eval $command'
             ]
             with open("pbs_job.sh", 'w') as f:
