@@ -46,7 +46,9 @@ def setup(output_dir, can_overwrite):
 
 def create_bash_python_script(filename, command):
     with open(filename, 'w') as f:
-        f.write('\n'.join(['source ./venv/bin/activate', command]))
+        f.write('\n'.join(['#!/bin/bash',
+                           'source ' + os.path.join(config_dict["script_dir"],'venv/bin/activate'),
+                           command]))
 
     abs_filename = os.path.abspath(filename)
     os.popen('chmod +x ' + abs_filename)
