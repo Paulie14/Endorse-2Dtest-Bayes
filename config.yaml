@@ -71,7 +71,7 @@ output_times: &output_times
 
 
 surrDAMH_parameters:
-  config_file: &config_bayes config_mcmc_bayes.yaml
+  config_file: &config_bayes config_mcmc_bayes_adaptive.yaml
   parameters:
     - name: perm_kr
       type: normal_to_lognormal
