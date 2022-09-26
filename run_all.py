@@ -46,7 +46,9 @@ def setup(output_dir, can_overwrite):
 
 def create_bash_python_script(filename, command):
     with open(filename, 'w') as f:
-        f.write('\n'.join(['source ./venv/bin/activate', command]))
+        f.write('\n'.join(['#!/bin/bash',
+                           'source ' + os.path.join(config_dict["script_dir"],'venv/bin/activate'),
+                           command]))
 
     abs_filename = os.path.abspath(filename)
     os.popen('chmod +x ' + abs_filename)
@@ -123,7 +125,9 @@ if __name__ == "__main__":
                 '\n# run from the repository directory',
                 'cd "' + config_dict["script_dir"] + '"',
                 '\n# command for running correct docker image',
-                'image="docker://$(./endorse_fterm image)"'
+                'image_name="$(./endorse_fterm image)"',
+                '\n',
+                'image=$( echo "$image_name.sif" | tr /: _ )'
             ]
 
             # prepare PBS script
@@ -146,7 +150,7 @@ if __name__ == "__main__":
                 'echo $command', 'eval $command', '\n',
                 'command="' + ' '.join(['./run_all_local.sh', str(N), output_dir, 'visualize', 'sing']) + '"',
                 'echo $command', 'eval $command', '\n',
-                'command="' + ' '.join(['./run_set.sh', output_dir, config_dict["run_best_n_accepted"]]) + '"',
+                'command="' + ' '.join(['./run_set.sh', output_dir, str(config_dict["run_best_n_accepted"]), 'sing']) + '"',
                 'echo $command', 'eval $command'
             ]
             with open("pbs_job.sh", 'w') as f:
