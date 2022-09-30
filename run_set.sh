@@ -28,8 +28,10 @@ if [ "$sing" == true ]; then
 
   # command for running correct docker image
   rep_dir=$(pwd)
-  image=$(./endorse_fterm image)
-  sing_command="singularity exec -B $rep_dir:$rep_dir docker://$image"
+  # image=$(./endorse_fterm image)
+  # sing_command="singularity exec -B $rep_dir:$rep_dir docker://$image"
+  image=$(./sif_image)
+  sing_command="singularity exec -B $rep_dir:$rep_dir $image"
 
   # auxiliary command for opening Python environment inside docker image
 #  bash_py="bash -c 'source ./venv/bin/activate &&"

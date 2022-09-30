@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# get image from fterm
+# image=$(./endorse_fterm image)
+
+image=/storage/liberec3-tul/home/pavel_exner/workspace/flow123d_images/flow123d_geomop-gnu:2.0.0.sif
+echo $image

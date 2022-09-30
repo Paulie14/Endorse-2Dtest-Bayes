@@ -22,19 +22,21 @@ fi
 rep_dir=$(pwd)
 
 # command for running correct docker image
-image_name=$(./endorse_fterm image)
-echo "Docker image name: '$image_name'"
+#image_name=$(./endorse_fterm image)
+#echo "Docker image name: '$image_name'"
+#
+## possibly create SIF image file
+#image_sif_file=$( echo "$image_name.sif" | tr /: _ )
+#if [ -f "$image_sif_file" ]; then
+#  echo "Using SIF image '$image_sif_file'"
+#  image=$image_sif_file
+#else
+#  echo "SIF does not exist. Building SIF image '$image_sif_file'"
+#  singularity build "$image_sif_file" "docker://$image_name"
+#  image=$image_sif_file
+#fi
 
-# possibly create SIF image file
-image_sif_file=$( echo "$image_name.sif" | tr /: _ )
-if [ -f "$image_sif_file" ]; then
-  echo "Using SIF image '$image_sif_file'"
-  image=$image_sif_file
-else
-  echo "SIF does not exist. Building SIF image '$image_sif_file'"
-  singularity build "$image_sif_file" "docker://$image_name"
-  image=$image_sif_file
-fi
+image=$(./sif_image)
 
 sing_command="singularity exec -B $rep_dir:$rep_dir $image"
 

@@ -124,10 +124,14 @@ if __name__ == "__main__":
                 'output_dir="' + output_dir + '"',
                 '\n# run from the repository directory',
                 'cd "' + config_dict["script_dir"] + '"',
-                '\n# command for running correct docker image',
-                'image_name="$(./endorse_fterm image)"',
+                # '\n# command for running correct docker image',
+                # 'image_name="$(./endorse_fterm image)"',
+                # '\n',
+                # 'image=$( echo "$image_name.sif" | tr /: _ )'
                 '\n',
-                'image=$( echo "$image_name.sif" | tr /: _ )'
+                'sing_script="/storage/liberec3-tul/home/pavel_exner/workspace/swrap/singularity_exec_mpi.py"'
+                '\n',
+                'image="/storage/liberec3-tul/home/pavel_exner/workspace/flow123d_images/flow123d_geomop-gnu:2.0.0.sif"'
             ]
 
             # prepare PBS script
@@ -143,7 +147,7 @@ if __name__ == "__main__":
                 '\n',
                 *common_lines,
                 '\n# finally gather the full command',
-                'command="python3 singularity_exec_mpi.py -i $image -- '
+                'command="python3 $sing_script -i $image -- '
                         + ' '.join(['-n', str(N),sampler_bash, ':',
                                     '-n', str(1),solver_bash, ':',
                                     '-n', str(1),collector_bash]) + '"',
