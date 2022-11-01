@@ -139,6 +139,7 @@ if __name__ == "__main__":
                 '#!/bin/bash',
                 '#PBS -S /bin/bash',
                 '#PBS -l select=' + str(met["chunks"]) + ':ncpus=' + str(met["ncpus_per_chunk"]) + ':mem=' + met["memory"],
+                '#PBS -l place=scatter',
                 '#PBS -l walltime=' + met["walltime"],
                 '#PBS -q ' + met["queue"],
                 '#PBS -N ' + met["name"],
