@@ -11,35 +11,37 @@ from surrDAMH.surrDAMH.configuration import Configuration
 # this script is supposed to be dependent only on python packages present on any machine
 # all other python scripts are later run inside docker container
 
-def setup(output_dir, can_overwrite):
+def setup(output_dir, can_overwrite, clean):
     # create and cd workdir
     rep_dir = os.path.dirname(os.path.abspath(__file__))
     work_dir = output_dir
 
+    # Files in the directory are used by each simulation at that level
+    common_files_dir = os.path.join(work_dir, "common_files")
     # Create working directory if necessary
-    os.makedirs(work_dir, mode=0o775, exist_ok=True)
+    aux_functions.force_mkdir(common_files_dir, force=clean)
     os.chdir(work_dir)
 
+    # test if config exists, copy from rep_dir if necessary
+    config_file = os.path.join(common_files_dir, "config.yaml")
+    if not os.path.exists(config_file):
+        shutil.copyfile(os.path.join(rep_dir, "config.yaml"), config_file)
+
     # read config file and setup paths
-    with open(os.path.join(rep_dir, "config.yaml"), "r") as f:
+    with open(config_file, "r") as f:
         config_dict = yaml.safe_load(f)
 
     config_dict["work_dir"] = work_dir
     config_dict["script_dir"] = rep_dir
 
-    # Files in the directory are used by each simulation at that level
-    common_files_dir = os.path.join(work_dir, "common_files")
     config_dict["common_files_dir"] = common_files_dir
     config_dict["bayes_config_file"] = os.path.join(common_files_dir,
                                                     config_dict["surrDAMH_parameters"]["config_file"])
 
-    if can_overwrite:
-        clean = config_dict["clean_sample_dir"]
-        aux_functions.force_mkdir(common_files_dir, force=clean)
-        # copy common files
-        for f in config_dict["copy_files"]:
-            filepath = os.path.join(common_files_dir, f)
-            # if not os.path.isfile(filepath):
+    # copy common files
+    for f in config_dict["copy_files"]:
+        filepath = os.path.join(common_files_dir, f)
+        if not os.path.isfile(filepath) or can_overwrite:
             shutil.copyfile(os.path.join(rep_dir, f), filepath)
 
     return config_dict
@@ -61,6 +63,7 @@ if __name__ == "__main__":
     N = 2  # default number of sampling processes
     oversubscribe = False  # if there are not enough slots available
     visualize = False  # True = only visualization
+    clean = False
 
     # read parameters
     len_argv = len(sys.argv)
@@ -70,11 +73,14 @@ if __name__ == "__main__":
     if len_argv > 2:
         N = int(sys.argv[2])  # number of MH/DAMH chains
     if len_argv > 3:
-        oversubscribe = sys.argv[3] == "oversubscribe"
-        visualize = sys.argv[3] == "visualize"
+        clean = sys.argv[3] == "clean"
+    if len_argv > 4:
+        oversubscribe = sys.argv[4] == "oversubscribe"
+        visualize = sys.argv[4] == "visualize"
+
 
     # setup paths and directories
-    config_dict = setup(output_dir, can_overwrite=(not visualize))
+    config_dict = setup(output_dir, can_overwrite=(not visualize), clean=clean)
     problem_path = config_dict["bayes_config_file"]
 
     # run sampling
@@ -87,6 +93,7 @@ if __name__ == "__main__":
         if not os.path.isfile(problem_path):
             raise Exception("Missing problem configuration '" + problem_path + "'."
                             + " Call simulation with 'run' command first!")
+        print(problem_path, flush=True)
         C = Configuration(N, problem_path)
         args = [str(N), problem_path, output_dir]
         if os.path.exists("surrDAMH/examples/visualization/" + C.problem_name + ".py"):
@@ -161,6 +168,7 @@ if __name__ == "__main__":
             with open("pbs_job.sh", 'w') as f:
                 f.write('\n'.join(lines))
 
+        print("preprocess", flush=True)
         preprocess(config_dict)
 
     # final command call

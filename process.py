@@ -7,6 +7,8 @@ import flow_wrapper
 from measured_data import MeasuredData
 import numpy as np
 
+# OBSOLETE FILE
+
 def just_run_flow123d(measured_data):
     wrap = flow_wrapper.Wrapper(solver_id=1)
     wrap.set_parameters(data_par=[7.794869596611009e-15, 0.14035455365537208])

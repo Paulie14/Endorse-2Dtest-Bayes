@@ -40,6 +40,7 @@ def preprocess(config_dict):
     conf["noise_parameters"] = [[30, 100]] * len(boreholes)
     conf["solver_module_path"] = os.path.join(config_dict["script_dir"], "flow_wrapper.py")
     conf["transformations"] = conf_bayes["parameters"]
+    conf["observe_points"] = boreholes
 
     for i, par in enumerate(conf_bayes["parameters"]):
         if par["type"] is None:
