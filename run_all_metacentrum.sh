@@ -2,22 +2,61 @@
 
 # set -x
 
+debug=false
+clean=""
+
+obligatory_param=0
+while getopts ":hdn:o:c" opt; do
+  case $opt in
+    h)
+      # help
+      echo "Usage: ./run_all_metacentrum.sh -n <N_CHAINS> -o <OUTPUT_DIR> -c -d"
+      echo "-c ... cleans the <OUTPUT_DIR> at first"
+      echo "-d ... only print the container command"
+      exit 0
+      ;;
+    d)
+      # debug
+      debug=true
+      ;;
+    n)
+      # number of Markov chains
+      n_chains=$OPTARG
+      ((obligatory_param=obligatory_param+1))
+      ;;
+    o)
+      # output directory
+      output_dir=$OPTARG
+      ((obligatory_param=obligatory_param+1))
+      ;;
+    c)
+      # output directory
+      clean="clean"
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
+done
+
+if [ "$debug" == true ]; then
+  echo "n_chains = $n_chains"
+  echo "output_dir = $output_dir"
+  echo "clean = $clean"
+fi
+
+if [[ $obligatory_param -lt 2 ]]; then
+  echo "Not all obligatory parameters set!"
+  exit 1
+fi
+
 # set running on metacentrum to True
 sed -i '/run_on_metacentrum:/c\run_on_metacentrum: True' config.yaml
-
-# number of Markov chains
-n_chains=$1
-# output directory
-output_dir=$2
-
-# command
-run=false
-visualize=false
-if [ "$3" == "visualize" ]; then
-  visualize=true
-elif [ "$3" == "run" ]; then
-  run=true
-fi
 
 rep_dir=$(pwd)
 
@@ -45,8 +84,10 @@ bash_py="bash -c 'source ./venv/bin/activate &&"
 
 
 # run setup, prepare PBS script (locally, single proc)
-command="$sing_command $bash_py python3 -m mpi4py run_all.py $output_dir $n_chains'"
+command="$sing_command $bash_py python3 -m mpi4py run_all.py $output_dir $n_chains $clean'"
 echo "$command"
-eval "$command"
 
-qsub "$output_dir/pbs_job.sh"
+if [ "$debug" == false ]; then
+  eval "$command"
+  qsub "$output_dir/pbs_job.sh"
+fi
