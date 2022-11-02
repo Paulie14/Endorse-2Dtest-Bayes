@@ -160,7 +160,7 @@ if __name__ == "__main__":
                                     '-n', str(1),solver_bash, ':',
                                     '-n', str(1),collector_bash]) + '"',
                 'echo $command', 'eval $command', '\n',
-                'command="' + ' '.join(['./run_all_local.sh', str(N), output_dir, 'visualize', 'sing']) + '"',
+                'command="' + ' '.join(['./run_all_local.sh', '-n', str(N), '-o', output_dir, '-t', 'visualize', '-s']) + '"',
                 'echo $command', 'eval $command', '\n',
                 'command="' + ' '.join(['./run_set.sh', output_dir, str(config_dict["run_best_n_accepted"]), 'sing']) + '"',
                 'echo $command', 'eval $command'
