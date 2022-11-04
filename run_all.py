@@ -171,7 +171,7 @@ if __name__ == "__main__":
         preprocess(config_dict)
 
     # final command call
-    if not config_dict["run_on_metacentrum"]:
+    if not config_dict["run_on_metacentrum"] or visualize:
         # local command call
         os.chdir(config_dict["script_dir"])
         print(command)
