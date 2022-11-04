@@ -2,6 +2,8 @@ import os
 import sys
 import csv
 import time
+import ruamel.yaml as yaml
+import numpy as np
 
 import flow_wrapper
 from measured_data import MeasuredData
@@ -51,9 +53,20 @@ def get_best_accepted_params(config_dict_in, output_dir_in, count):
     modi = samples.find_n_modi(count)
     print(count, " best MODI:\n", modi)
 
+    conf_bayes_path = os.path.join(output_dir_in, "common_files", config_dict_in["surrDAMH_parameters"]["config_file"])
+    with open(conf_bayes_path) as f:
+        config_bayes = yaml.safe_load(f)
+    observations = np.array(config_bayes["problem_parameters"]["observations"])
+    best_fit = samples.find_best_fit(os.path.join(data_dir, "raw_data"), no_parameters, observations)
+    print("best fit:\n", best_fit[0])
+    best_fit_params = best_fit[0]
+
     param_file = os.path.join(output_dir_in, "best_accepted_params.csv")
     params = []
     with open(param_file, 'w') as file:
+        params.append(best_fit_params)
+        line = ','.join([str(s) for s in best_fit_params])
+        file.write(line + "\n")
         for post, i, li, mod in modi:
             params.append(mod)
             line = ','.join([str(s) for s in mod])
@@ -82,16 +95,13 @@ if __name__ == "__main__":
             n_best_params = int(sys.argv[2])
 
     # setup paths and directories
-    config_dict = setup(output_dir, can_overwrite=True)
+    config_dict = setup(output_dir, can_overwrite=False, clean=False)
 
-    preprocess(config_dict)
+    # preprocess(config_dict)
 
     # prepare measured data as observations
     md = MeasuredData(config_dict)
     md.initialize()
-
-    md.plot_all_data()
-    md.plot_interp_data()
 
     boreholes = config_dict["surrDAMH_parameters"]["observe_points"]
     times, values = md.generate_measured_samples(boreholes)
