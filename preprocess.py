@@ -28,16 +28,17 @@ def preprocess(config_dict):
     conf = yaml_handler.load(file_content)
     # print(conf.ca)
 
+    noise_std = 50
     npar = len(conf_bayes["parameters"])
     conf["no_parameters"] = npar
-    conf["problem_parameters"]["noise_std"] = [100] # * len(values)
+    conf["problem_parameters"]["noise_std"] = [noise_std] # * len(values)
     conf["problem_parameters"]["observations"] = np.array(values).tolist()
     conf["problem_parameters"]["prior_mean"] = [0.0] * npar
     conf["problem_parameters"]["prior_std"] = [1.0] * npar
     conf["no_observations"] = len(values)
     conf["noise_type"] = "Gaussian_process"
     conf["noise_grid"] = np.array(times).tolist()
-    conf["noise_parameters"] = [[30, 100]] * len(boreholes)
+    conf["noise_parameters"] = [[30, noise_std]] * len(boreholes)
     conf["solver_module_path"] = os.path.join(config_dict["script_dir"], "flow_wrapper.py")
     conf["transformations"] = conf_bayes["parameters"]
     conf["observe_points"] = boreholes
