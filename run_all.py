@@ -136,7 +136,7 @@ if __name__ == "__main__":
                 # '\n',
                 # 'image=$( echo "$image_name.sif" | tr /: _ )'
                 '\n',
-                'sing_script="/storage/liberec3-tul/home/pavel_exner/workspace/swrap/singularity_exec_mpi.py"'
+                'sing_script="/storage/liberec3-tul/home/pavel_exner/workspace/swrap/src/swrap/smpiexec.py"'
                 '\n',
                 'image="/storage/liberec3-tul/home/pavel_exner/workspace/flow123d_images/flow123d_geomop-gnu:2.0.0.sif"'
             ]
@@ -162,6 +162,10 @@ if __name__ == "__main__":
                 'echo $command', 'eval $command', '\n',
                 'command="' + ' '.join(['./run_all_local.sh', '-n', str(N), '-o', output_dir, '-t', 'visualize', '-s']) + '"',
                 'echo $command', 'eval $command', '\n',
+                'cd ' + output_dir,
+                'zip -r samples.zip solver_*',
+                'rm -r solver_*',
+                'cd ..',
                 'command="' + ' '.join(['./run_set.sh', output_dir, str(config_dict["run_best_n_accepted"]), 'sing']) + '"',
                 'echo $command', 'eval $command'
             ]
