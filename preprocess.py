@@ -18,8 +18,9 @@ def preprocess(config_dict):
 
     conf_bayes = config_dict["surrDAMH_parameters"]
 
-    boreholes = conf_bayes["observe_points"]
-    times, values = md.generate_measured_samples(boreholes)
+    pressure_obs_points = conf_bayes["observe_points"]
+    conductivity_obs_points = conf_bayes["conductivity_observe_points"]
+    times, values = md.generate_measured_samples(pressure_obs_points)
 
     config_bayes_file = config_dict["bayes_config_file"]
     yaml_handler = yaml.YAML()
@@ -28,19 +29,33 @@ def preprocess(config_dict):
     conf = yaml_handler.load(file_content)
     # print(conf.ca)
 
+    # noise parameters:
+    # [correlation_length, noise_std] * n_blocks
+    # n_blocks ... number of observation points ('blocks' in observation vector values)
+    pressure_noise_std = 50
+    cond_noise_std = 5
+    # pressure
+    npob = len(pressure_obs_points)
+    noise_parameters = [[30, pressure_noise_std]] * npob
+    noise_std = [pressure_noise_std] * (npob*len(times))
+    # conductivity
+    ncob = len(conductivity_obs_points)
+    noise_parameters.extend([[10, cond_noise_std]] * ncob)
+    noise_std = [cond_noise_std] * (ncob * len(times))
+
     npar = len(conf_bayes["parameters"])
     conf["no_parameters"] = npar
-    conf["problem_parameters"]["noise_std"] = [100] # * len(values)
+    conf["problem_parameters"]["noise_std"] = noise_std
     conf["problem_parameters"]["observations"] = np.array(values).tolist()
     conf["problem_parameters"]["prior_mean"] = [0.0] * npar
     conf["problem_parameters"]["prior_std"] = [1.0] * npar
     conf["no_observations"] = len(values)
     conf["noise_type"] = "Gaussian_process"
     conf["noise_grid"] = np.array(times).tolist()
-    conf["noise_parameters"] = [[30, 100]] * len(boreholes)
+    conf["noise_parameters"] = noise_parameters
     conf["solver_module_path"] = os.path.join(config_dict["script_dir"], "flow_wrapper.py")
     conf["transformations"] = conf_bayes["parameters"]
-    conf["observe_points"] = boreholes
+    conf["observe_points"] = pressure_obs_points
 
     for i, par in enumerate(conf_bayes["parameters"]):
         if par["type"] is None:
