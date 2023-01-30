@@ -10,6 +10,7 @@ metacentrum:
   queue: charon
   name: TSX_bayes
   workspace_rel: ../../workspace
+  swrap: /storage/liberec3-tul/home/pavel_exner/workspace/swrap/src/swrap/smpiexec.py
 
 
 collect_only: False
