@@ -25,6 +25,8 @@ run_best_n_accepted: 2
 local:
   flow_executable:
     ### this is the simplest case when using inside docker (or singularity) image
+    # running with empty environment (env -i); keep flow123d paths:
+    - LD_LIBRARY_PATH=/opt/flow123d/lib
     - /opt/flow123d/bin/flow123d
     ### this is for installed Flow123d package or individual build
 #    - /home/domesova/flow123d_3.1.0/bin/fterm.sh
@@ -143,6 +145,11 @@ surrDAMH_parameters:
     - HGT1-4
     - HGT2-4
     - HGT2-3
+  conductivity_observe_points:
+    - V01_cond
+    - V02_cond
+    - H01_cond
+    - H02_cond
 
 geometry:
   # base of the mesh file name
@@ -161,8 +168,8 @@ geometry:
 hm_params:
     mesh: tunnel_mesh.msh # healed mesh is used at the end (programmatically replaced)
 #    in_file: A01_hm
-    in_file: A02_hm
-#    in_file: A03_hm
+#    in_file: A02_hm
+    in_file: A03_hm
 #    in_file: A04_hm
 #    in_file: C04_hm
 #    in_file: B02long_hm
@@ -214,9 +221,5 @@ hm_params:
 copy_files:
   - config.yaml
   - *config_bayes
-  - config_mcmc_bayes.yaml
   - flow123d_simulation.py
-  - A02_hm_tmpl.yaml
   - A03_hm_tmpl.yaml
-  - A04_hm_tmpl.yaml
-  - C04_hm_tmpl.yaml

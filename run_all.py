@@ -136,9 +136,9 @@ if __name__ == "__main__":
                 # '\n',
                 # 'image=$( echo "$image_name.sif" | tr /: _ )'
                 '\n',
-                'sing_script="/storage/liberec3-tul/home/pavel_exner/workspace/swrap/singularity_exec_mpi.py"'
+                'sing_script="' + met["swrap"] + '"'
                 '\n',
-                'image="/storage/liberec3-tul/home/pavel_exner/workspace/flow123d_images/flow123d_geomop-gnu:2.0.0.sif"'
+                'image=$(' + os.path.join(config_dict["script_dir"], 'sif_image') + ')'
             ]
 
             # prepare PBS script

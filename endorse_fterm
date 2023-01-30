@@ -49,8 +49,11 @@ REL_FLOW_DIR=$(realpath --relative-to=$(pwd) $ABS_FLOW_DIR)
 #image_name=geomop
 #image_tag=PE_user_fields_12e8aadde
 
-image_name=geomop-gnu
-image_tag=2.0.0
+#image_name=geomop-gnu
+#image_tag=2.0.0
+
+image_name=endorse_ci
+image_tag=ad0b5a
 
 function get_base_image() {
     local image=flow123d/$image_name:$image_tag
