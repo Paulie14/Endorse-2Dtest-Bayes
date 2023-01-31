@@ -210,7 +210,81 @@ By substituting parameters from \tabref{tab:model_01_parameters}, we get
 % \end{itemize}
 % }
 
+\cleardoublepage
+    %{
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{graphics/bayes/hist_G3.pdf}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{graphics/bayes/hist_G4.pdf}
+    \end{subfigure}
+    %}
+\begin{figure}[htb!]
+    \centering
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_02_init_per_borehole/G1/hist_G1.pdf}
+      \caption{Histogram odezvy tlaku v pozorovacím vrtu.}
+      \label{fig:hist_g1_lin}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_02_init_per_borehole/G1/histograms2.pdf}
+      \caption{Histogramy empirických marginálních posteriorních rozdělení.}
+      \label{fig:hist_g1_lin_params}
+    \end{subfigure}
+    \caption{Výsledky pro pozorovací vrt HGT1-5.}
+    \label{fig:hist_G1}
+\end{figure}
 
+\begin{figure}[htb!]
+    \centering
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_02_init_per_borehole/G2/hist_G1.pdf}
+      \caption{Histogram odezvy tlaku v pozorovacím vrtu.}
+      \label{fig:hist_g2_lin}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_02_init_per_borehole/G2/histograms2.pdf}
+      \caption{Histogramy empirických marginálních posteriorních rozdělení.}
+      \label{fig:hist_g2_lin_params}
+    \end{subfigure}
+    \caption{Výsledky pro pozorovací vrt HGT1-4.}
+    \label{fig:hist_G2}
+\end{figure}
+
+\begin{figure}[htb!]
+    \centering
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_02_init_per_borehole/G3/hist_G1.pdf}
+      \caption{Histogram odezvy tlaku v pozorovacím vrtu.}
+      \label{fig:hist_g3_lin}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_02_init_per_borehole/G3/histograms2.pdf}
+      \caption{Histogramy empirických marginálních posteriorních rozdělení.}
+      \label{fig:hist_g3_lin_params}
+    \end{subfigure}
+    \caption{Výsledky pro pozorovací vrt HGT2-3.}
+    \label{fig:hist_G3}
+\end{figure}
+
+\begin{figure}[htb!]
+    \centering
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_02_init_per_borehole/G4/hist_G1.pdf}
+      \caption{Histogram odezvy tlaku v pozorovacím vrtu.}
+      \label{fig:hist_g4_lin}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_02_init_per_borehole/G4/histograms2.pdf}
+      \caption{Histogramy empirických marginálních posteriorních rozdělení.}
+      \label{fig:hist_g4_lin_params}
+    \end{subfigure}
+    \caption{Výsledky pro pozorovací vrt HGT2-4.}
+    \label{fig:hist_G4}
+\end{figure}
+
+
+\pagebreak
 
 \subsubsection{Model 2 -- nonlinear hydraulic conductivity}
 The second model is derived directly from Model 1 (Section \ref{sec:model_01}).
@@ -236,21 +310,147 @@ where
         with $\sigma_{c}=55\,\unit{MPa}$.
 \end{itemize}
 
+
+\cleardoublepage
+
 \begin{figure}[htb!]
     \centering
     \begin{subfigure}[t]{0.495\textwidth}
-      \includegraphics[width=\textwidth]{\respath fixed_model/fixed_02/observe_comparison.pdf}
-      \caption{Coarse mesh.}
-      \label{fig:mass_mobile_flow123d}
+      \includegraphics[width=\textwidth]{\respath SAVE_03_nonlinear_per_borehole/G1/hist_G1.pdf}
+      \caption{Histogram odezvy tlaku v pozorovacím vrtu.}
+      \label{fig:hist_g1_nonlin}
     \end{subfigure}
     \begin{subfigure}[t]{0.495\textwidth}
-      \includegraphics[width=\textwidth]{\respath fixed_model/fixed_03/observe_comparison.pdf}
-      \caption{Fine mesh.}
-      \label{fig:mass_sorbed_flow123d}
+      \includegraphics[width=\textwidth]{\respath SAVE_03_nonlinear_per_borehole/G1/histograms2.pdf}
+      \caption{Histogramy empirických marginálních posteriorních rozdělení.}
+      \label{fig:hist_g1_lin_params}
     \end{subfigure}
-    \caption{Results of Model 2 -- observed pressure, nonlinear conductivity.}
-    \label{fig:balance_flow123d}
+    \caption{Výsledky pro pozorovací vrt HGT1-5.}
+    \label{fig:hist_G1}
 \end{figure}
+
+\begin{figure}[htb!]
+    \centering
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_03_nonlinear_per_borehole/G2/hist_G1.pdf}
+      \caption{Histogram odezvy tlaku v pozorovacím vrtu.}
+      \label{fig:hist_g2_lin}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_03_nonlinear_per_borehole/G2/histograms2.pdf}
+      \caption{Histogramy empirických marginálních posteriorních rozdělení.}
+      \label{fig:hist_g2_lin_params}
+    \end{subfigure}
+    \caption{Výsledky pro pozorovací vrt HGT1-4.}
+    \label{fig:hist_G2}
+\end{figure}
+
+\begin{figure}[htb!]
+    \centering
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_03_nonlinear_per_borehole/G3/hist_G1.pdf}
+      \caption{Histogram odezvy tlaku v pozorovacím vrtu.}
+      \label{fig:hist_g3_lin}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_03_nonlinear_per_borehole/G3/histograms2.pdf}
+      \caption{Histogramy empirických marginálních posteriorních rozdělení.}
+      \label{fig:hist_g3_lin_params}
+    \end{subfigure}
+    \caption{Výsledky pro pozorovací vrt HGT2-3.}
+    \label{fig:hist_G3}
+\end{figure}
+
+\begin{figure}[htb!]
+    \centering
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_03_nonlinear_per_borehole/G4/hist_G1.pdf}
+      \caption{Histogram odezvy tlaku v pozorovacím vrtu.}
+      \label{fig:hist_g4_lin}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_03_nonlinear_per_borehole/G4/histograms2.pdf}
+      \caption{Histogramy empirických marginálních posteriorních rozdělení.}
+      \label{fig:hist_g4_lin_params}
+    \end{subfigure}
+    \caption{Výsledky pro pozorovací vrt HGT2-4.}
+    \label{fig:hist_G4}
+\end{figure}
+
+
+
+% \pagebreak
+\cleardoublepage
+
+\begin{figure}[htb!]
+    \centering
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_04_nonlinear_per_borehole/G1/hist_G1.pdf}
+      \caption{Histogram odezvy tlaku v pozorovacím vrtu.}
+      \label{fig:hist_g1_nonlin}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_04_nonlinear_per_borehole/G1/histograms2.pdf}
+      \caption{Histogramy empirických marginálních posteriorních rozdělení.}
+      \label{fig:hist_g1_lin_params}
+    \end{subfigure}
+    \caption{Výsledky pro pozorovací vrt HGT1-5.}
+    \label{fig:hist_G1}
+\end{figure}
+
+\begin{figure}[htb!]
+    \centering
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_04_nonlinear_per_borehole/G2/hist_G1.pdf}
+      \caption{Histogram odezvy tlaku v pozorovacím vrtu.}
+      \label{fig:hist_g2_lin}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_04_nonlinear_per_borehole/G2/histograms2.pdf}
+      \caption{Histogramy empirických marginálních posteriorních rozdělení.}
+      \label{fig:hist_g2_lin_params}
+    \end{subfigure}
+    \caption{Výsledky pro pozorovací vrt HGT1-4.}
+    \label{fig:hist_G2}
+\end{figure}
+
+\begin{figure}[htb!]
+    \centering
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_04_nonlinear_per_borehole/G3/hist_G1.pdf}
+      \caption{Histogram odezvy tlaku v pozorovacím vrtu.}
+      \label{fig:hist_g3_lin}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_04_nonlinear_per_borehole/G3/histograms2.pdf}
+      \caption{Histogramy empirických marginálních posteriorních rozdělení.}
+      \label{fig:hist_g3_lin_params}
+    \end{subfigure}
+    \caption{Výsledky pro pozorovací vrt HGT2-3.}
+    \label{fig:hist_G3}
+\end{figure}
+
+\begin{figure}[htb!]
+    \centering
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_04_nonlinear_per_borehole/G4/hist_G1.pdf}
+      \caption{Histogram odezvy tlaku v pozorovacím vrtu.}
+      \label{fig:hist_g4_lin}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.495\textwidth}
+      \includegraphics[width=\textwidth]{\respath SAVE_04_nonlinear_per_borehole/G4/histograms2.pdf}
+      \caption{Histogramy empirických marginálních posteriorních rozdělení.}
+      \label{fig:hist_g4_lin_params}
+    \end{subfigure}
+    \caption{Výsledky pro pozorovací vrt HGT2-4.}
+    \label{fig:hist_G4}
+\end{figure}
+
+motivace k bayesovi - ziskat vodivost a porozitu,
+samply do transportniho modelu - populace
+bayes
+dopredny model (rovnice JS), vybrane parametry a volba prioru, navrhove rozdeleni
+
 
 % The geometry is shown in \figref{fig:model_01_geometry} and boundary conditions are depicted.
 % The input parameters of the fixed forward model are gathered in \tabref{tab:model_01_parameters}.
