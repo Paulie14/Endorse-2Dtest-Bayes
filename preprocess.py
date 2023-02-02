@@ -21,7 +21,7 @@ def preprocess(config_dict):
     boreholes = conf_bayes["observe_points"]
     times, values = md.generate_measured_samples(boreholes)
 
-    config_bayes_file = conf_bayes["config_file"]
+    config_bayes_file = config_dict["bayes_config_file"]
     yaml_handler = yaml.YAML()
     with open(config_bayes_file) as f:
         file_content = f.read()
