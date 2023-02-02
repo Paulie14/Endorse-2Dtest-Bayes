@@ -42,7 +42,7 @@ class MeasuredData:
     def plot_interp_data(self):
         fig, ax1 = plt.subplots()
         ax1.set_xlabel('time [d]')
-        ax1.set_ylabel('pressure [m]')
+        ax1.set_ylabel('pressure head [m]')
 
         self.plot_data_set(self.borehole_names, self.measured_data, ax1, linestyle='solid')
 
@@ -51,6 +51,8 @@ class MeasuredData:
             # p = interpolate.splev(t, self.interp_data[bname])
             p = self.interp_data[bname](t)
             ax1.plot(t, p, color='black', label=bname, linestyle='dotted')
+
+        self.additional_annotation(ax1)
 
         ax1.tick_params(axis='y')
         ax1.legend(ncol=3)
@@ -67,9 +69,11 @@ class MeasuredData:
 
         fig, ax1 = plt.subplots()
         ax1.set_xlabel('time [d]')
-        ax1.set_ylabel('pressure [m]')
+        ax1.set_ylabel('pressure head [m]')
         self.plot_data_set(bnames_ch, data_ch, ax1, linestyle='solid')
         self.plot_data_set(bnames_rq, data_rq, ax1, linestyle='dotted')
+
+        self.additional_annotation(ax1)
 
         props = dict(boxstyle='square', facecolor='white', alpha=0.25)
         ax1.text(0.17, 0.97, "rutquist(dotted)\nchandler(solid)", transform=ax1.transAxes, fontsize=9,
@@ -82,6 +86,17 @@ class MeasuredData:
         # plt.show()
         fig_file = os.path.join(self._config["work_dir"], "measured_data_TSX.pdf")
         plt.savefig(fig_file)
+
+    def additional_annotation(self, axis):
+        bored_time = int(self._config["bored_time"])
+        axis.axvline(x=bored_time, ymin=0.0, ymax=1.0, color='k', linewidth=0.25)
+        # axis.set_xticks(list(ax1.get_xticks()) + [17])
+        axis.axhline(y=300, xmin=0.0, xmax=1.0, color='gray', linewidth=0.1)
+        axis.axhline(y=275, xmin=0.0, xmax=1.0, color='gray', linewidth=0.1)
+        axis.axhline(y=250, xmin=0.0, xmax=1.0, color='gray', linewidth=0.1)
+        axis.text(18, 11, str(bored_time), fontsize=5)
+        axis.text(-15, 278, '275', fontsize=5)
+        axis.text(-15, 253, '250', fontsize=5)
 
     def plot_comparison(self, computed_data, output_dir, boreholes):
         fig, ax1 = plt.subplots()
@@ -161,7 +176,7 @@ class MeasuredData:
 
         borehole_names.extend(borehole_names_2)
         data.update(data_2)
-        excavation_start = 12.7
+        excavation_start = 11.4 #12.7
         # sorting and cropping data
         for bname, dat in data.items():
             t = np.array(dat["time"])
@@ -180,7 +195,7 @@ class MeasuredData:
         # read Rutquist data
         datafile = os.path.join(self._config["script_dir"], "measured_data", "rutquist_wpd_datasets.csv")
         borehole_names, data= self.read_csv_graph_data(datafile)
-        excavation_start_rq = 14
+        excavation_start_rq = 12.5
         # sorting and cropping data
         for bname, dat in data.items():
             t = np.array(dat["time"])
@@ -215,7 +230,7 @@ if __name__ == "__main__":
     import json
     import flow_wrapper
 
-    config_dict = flow_wrapper.setup_config()
+    config_dict = flow_wrapper.setup_config("measured_data")
 
     os.makedirs(config_dict["work_dir"], mode=0o775, exist_ok=True)
     os.chdir(config_dict["work_dir"])
@@ -229,12 +244,14 @@ if __name__ == "__main__":
     boreholes = ["HGT1-5", "HGT1-4", "HGT2-4", "HGT2-3"]
     times, values = md.generate_measured_samples(boreholes)
 
-    with open("/home/paulie/Workspace/Endorse-2Dtest-Bayes/minimal_flow_PE.json") as f:
-        conf = json.load(f)
-        conf["problem_parameters"]["observations"] = values
+    print(times, values)
 
-    with open("/home/paulie/Workspace/Endorse-2Dtest-Bayes/minimal_flow_PE.json", "w") as f:
-        json.dump(conf, f, indent=4)
+    # with open("/home/paulie/Workspace/Endorse-2Dtest-Bayes/minimal_flow_PE.json") as f:
+    #     conf = json.load(f)
+    #     conf["problem_parameters"]["observations"] = values
+    #
+    # with open("/home/paulie/Workspace/Endorse-2Dtest-Bayes/minimal_flow_PE.json", "w") as f:
+    #     json.dump(conf, f, indent=4)
 
 
 
