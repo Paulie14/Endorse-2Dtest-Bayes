@@ -25,6 +25,15 @@ problem: !Coupling_Sequential
             a_tol: <flow_solver__a_tol>
             r_tol: <flow_solver__r_tol>
             options: <flow_solver__options>
+#        user_fields:
+#          - name: cond_x
+#            is_boundary: false
+#            scalar_field: !FieldFormula
+#              value: ( (<kx2>-<kx1>)/25 * (abs(x)-7.1875)*(abs(x)-7.1875) + <kx1> ) * cos(atan(y/x))
+#          - name: cond_y
+#            is_boundary: false
+#            scalar_field: !FieldFormula
+#              value: ( (<ky2>-<ky1>)/25 * (abs(y)-6.7500)*(abs(y)-6.7500) + <ky1> ) * sin(atan(y/x))
         input_fields:
           - region: BULK
             conductivity: !FieldFormula
@@ -33,27 +42,39 @@ problem: !Coupling_Sequential
                         1000*9.81/0.001 * (<perm_kr> + <perm_km>*exp(<perm_beta> * mean_stress)),
                         1000*9.81/0.001 * (<perm_kr> + <perm_km>*exp(<perm_beta> * mean_stress)) * exp(<perm_gamma>*(von_mises_stress-55e6))
                        )
+#                     ( ( (<kx2>-<kx1>)/25 * (abs(x)-7.1875)**2 + 6e-15 ) * x**2
+#                      +( (<ky2>-<ky1>)/25 * (abs(y)-6.7500)**2 + 6e-15 ) * y**2) / (x**2 + y**2)
+#                     if (x/7.1875)**2 + (y/6.75)**2 <= 1 else 6e-15
+
+#if( (abs(x)<7.1875) & (abs(y)<6.75),
+#                           ( (<kx2>-<kx1>)/(2.1875*(-5)) * (x*x-7.1875*abs(x)) + <kx1> ) * cos(atan(y/x))
+#                          +( (<ky2>-<ky1>)/(1.7500*(-5)) * (y*y-6.7500*abs(y)) + <ky1> ) * sin(atan(y/x)),
+#                        <kx1>
+#                        )
+
+#              value: ( (<kx2>-<kx1>)/(2.1875*(-5)) * (x*x-7.1875*x) + <kx1> ) * cos(atan(y/x))
+#                    +( (<ky2>-<ky1>)/(1.75*(-5)) * (y*y-6.75*y) + <ky1> ) * sin(atan(y/x))
             # https://en.wikipedia.org/wiki/Specific_storage
             storativity: <storativity> #2.8e-8 #3.28e-7 # S = rho * g * (beta_s + nu * beta_w)
             # bulk compressibility beta_s=1/K = (3(1-2pr)/E)
             # porosity nu=0.007
             # water compressibility beta_w=0 1/Pa
-            init_pressure: <init_pressure>
+            init_pressure: 300
 
           - region: .outer_boundary
             bc_type: dirichlet
-            bc_pressure: <init_pressure>
+            bc_pressure: 300 # 3MPa = p = h*rho*g => h = 300 m
 
 #          - region: .tunnel
 #            bc_type: dirichlet
 #            bc_pressure: !FieldFormula
-#              value: <init_pressure>
+#              value: 300
 
           - region: .tunnel
             time: 0
             bc_type: dirichlet
             bc_pressure: !FieldFormula
-              value: <init_pressure>*(-1/(<bored_time>*86400)*t + 1) # 1d=86400s
+              value: 300*(-1/(<bored_time>*86400)*t + 1) # 1d=86400s
           - region: .tunnel
             time: <bored_time>
             bc_type: dirichlet
@@ -61,12 +82,12 @@ problem: !Coupling_Sequential
 
         output:
           times: <output_times>
-          fields: []
-#            - { field: conductivity, interpolation: P1_average }
-#            - piezo_head_p0
-#            - pressure_p0
-#            - velocity_p0
-#            - region_id
+          fields: #[]
+            - { field: conductivity, interpolation: P1_average }
+            - piezo_head_p0
+            - pressure_p0
+            - velocity_p0
+            - region_id
           observe_fields: [pressure_p0]
         #balance:
           #cumulative: true
@@ -85,14 +106,15 @@ problem: !Coupling_Sequential
 #          observe_points: *observe_points
         output:
           times: <output_times>
-          fields: []
-#            - { field: displacement, interpolation: P1_average }
-#            - stress
-#            - displacement_divergence
-#            - mean_stress
-#            - von_mises_stress
-#            - initial_stress
-#            - region_id
+          fields: #[]
+            - { field: displacement, interpolation: P1_average }
+            - stress
+            - displacement_divergence
+            - mean_stress
+            - von_mises_stress
+            - initial_stress
+            - region_id
+            - young_modulus
 #          observe_fields: [displacement]
         solver: !Petsc
           a_tol: <mechanics_solver__a_tol>
@@ -100,9 +122,12 @@ problem: !Coupling_Sequential
           options: <mechanics_solver__options>
         input_fields:
           - region: BULK
-            young_modulus: <young_modulus>
+            young_modulus: !FieldFormula
+              value: ( ( (<young_modulus_1>-<young_modulus>)/25 * (abs(x)-7.1875)**2 + <young_modulus> ) * x**2
+                      +( (<young_modulus_1>-<young_modulus>)/25 * (abs(y)-6.7500)**2 + <young_modulus> ) * y**2) / (x**2 + y**2)
+                     if (x/7.1875)**2 + (y/6.75)**2 <= 1 else <young_modulus>
             poisson_ratio: <poisson_ratio>
-            initial_stress: [ -<init_stress_x>, -<init_stress_y>, -60e6]
+            initial_stress: [ -<init_stress_x>, -11e6, -60e6]
 
           - region: .outer_boundary
             bc_type: displacement
@@ -114,8 +139,8 @@ problem: !Coupling_Sequential
             time: 0
             bc_type: stress
             bc_stress: !FieldFormula
-              value: [ -<init_stress_x>*(1/(<bored_time>*86400)*t), -<init_stress_y>*(1/(<bored_time>*86400)*t), 0] # 1d=86400s
+              value: [ -<init_stress_x>*(1/(<bored_time>*86400)*t), -11e6*(1/(<bored_time>*86400)*t), 0] # 1d=86400s
           - region: .tunnel
             time: <bored_time>
             bc_type: stress
-            bc_stress: [ -<init_stress_x>, -<init_stress_y>, 0] # 1d=86400s
+            bc_stress: [ -<init_stress_x>, -11e6, 0] # 1d=86400s

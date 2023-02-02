@@ -183,10 +183,13 @@ hm_params:
     storativity: 7.290792E-08  # S = rho * g * (beta_s + nu * beta_w)
     # permeability k=6e-22 m2, dyn. viscosity mu=0.001 Pa.s, g=9.81 m.s-2
     bulk_conductivity: 5.886E-15  # K = k * rho * g /mu
+    init_pressure: 275 # 3MPa = p = h*rho*g => h = 300 m
+
     young_modulus: 60e9
     young_modulus_1: 30e9
     poisson_ratio: 0.2
     init_stress_x: 45e6
+    init_stress_y: 11e6
 
     # non-linear permeability
     perm_kr: 6e-22
