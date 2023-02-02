@@ -161,8 +161,8 @@ geometry:
 hm_params:
     mesh: tunnel_mesh.msh # healed mesh is used at the end (programmatically replaced)
 #    in_file: A01_hm
-    in_file: A02_hm
-#    in_file: A03_hm
+#    in_file: A02_hm
+    in_file: A03_hm
 #    in_file: A04_hm
 #    in_file: C04_hm
 #    in_file: B02long_hm
@@ -214,9 +214,5 @@ hm_params:
 copy_files:
   - config.yaml
   - *config_bayes
-  - config_mcmc_bayes.yaml
   - flow123d_simulation.py
-  - A02_hm_tmpl.yaml
   - A03_hm_tmpl.yaml
-  - A04_hm_tmpl.yaml
-  - C04_hm_tmpl.yaml
