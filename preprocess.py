@@ -28,17 +28,36 @@ def preprocess(config_dict):
     conf = yaml_handler.load(file_content)
     # print(conf.ca)
 
-    noise_std = 50
     npar = len(conf_bayes["parameters"])
     conf["no_parameters"] = npar
-    conf["problem_parameters"]["noise_std"] = [noise_std] # * len(values)
+    # not necessary due to conf["noise_parameters"]
+    # conf["problem_parameters"]["noise_std"] = [noise_std] # * len(values)
     conf["problem_parameters"]["observations"] = np.array(values).tolist()
     conf["problem_parameters"]["prior_mean"] = [0.0] * npar
     conf["problem_parameters"]["prior_std"] = [1.0] * npar
     conf["no_observations"] = len(values)
-    conf["noise_type"] = "Gaussian_process"
-    conf["noise_grid"] = np.array(times).tolist()
-    conf["noise_parameters"] = [[30, noise_std]] * len(boreholes)
+
+    noise_model_list = []
+    # noise for pressure head in boreholes
+    dict_01 = dict()
+    dict_01["time_grid"] = np.array(times).tolist()
+    dict_01["corr_length"] = 30
+    dict_01["std"] = 50
+    dict_01["cov_type"] = "default"
+    offset = 0
+    for i in range(len(boreholes)):
+        d = dict_01.copy()
+        d["range"] = [offset, len(times)]
+        noise_model_list.append(d)
+    # noise for conductivity
+    # dict_02 = dict_01.copy()
+    # dict_02["time_grid"] = [times[-1]]
+    # dict_02["corr_length"] = 0
+    # dict_02["std"] = 1.0
+    # noise_model_list = [dict_01.copy()] * len(boreholes)
+
+    conf["noise_model"] = noise_model_list
+
     conf["solver_module_path"] = os.path.join(config_dict["script_dir"], "flow_wrapper.py")
     conf["transformations"] = conf_bayes["parameters"]
     conf["observe_points"] = boreholes
